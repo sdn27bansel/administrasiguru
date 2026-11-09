@@ -651,7 +651,7 @@
     ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     : null;
 
-  // DAFTAR MENU UTAMA (10 MENU UNTUK ADMIN/GURU)
+  // DAFTAR MENU UTAMA (11 MENU UNTUK ADMIN/GURU - DITAMBAH E-RAPOR KURIKULUM MERDEKA)
   const MENU_ITEMS = [
     { id: 'dashboard', label: 'Dashboard', icon: 'ph-house' },
     { id: 'kelas', label: 'Data Kelas', icon: 'ph-door-open' },
@@ -660,6 +660,7 @@
     { id: 'jadwal', label: 'Jadwal Pelajaran', icon: 'ph-calendar' },
     { id: 'jurnal', label: 'Jurnal Mengajar', icon: 'ph-notebook' },
     { id: 'nilai', label: 'Buku Nilai', icon: 'ph-medal' },
+    { id: 'erapor', label: 'E-Rapor Merdeka', icon: 'ph-graduation-cap' },
     { id: 'literasi', label: 'Literasi & Numerasi', icon: 'ph-target' },
     { id: 'bimbingan', label: 'Bimbingan Wali', icon: 'ph-Chat-centered-heart' },
     { id: 'pengaturan', label: 'Pengaturan', icon: 'ph-gear-six' }
@@ -668,6 +669,7 @@
   // MENU KHUSUS PORTAL ORANG TUA SISWA
   const ORTU_MENU_ITEMS = [
     { id: 'ortu_dashboard', label: 'Ringkasan Anak', icon: 'ph-student' },
+    { id: 'ortu_erapor', label: 'E-Rapor Anak', icon: 'ph-graduation-cap' },
     { id: 'ortu_literasi', label: 'Target Literasi & Numerasi', icon: 'ph-target' },
     { id: 'ortu_nilai', label: 'Buku Nilai Anak', icon: 'ph-medal' },
     { id: 'ortu_absensi', label: 'Rekap Kehadiran', icon: 'ph-check-square-offset' },
@@ -686,6 +688,298 @@
     'Muatan Lokal'
   ];
 
+  // =====================================================================================
+  // MATRIKS RESMI PANDUAN LAPORAN KINERJA & CAPAIAN PEMBELAJARAN (TRIWULAN)
+  // DINAS DIKPORA KABUPATEN DONGGALA 2026 (LAMPIRAN 2, 3, 4, & 5 — JENJANG SD KELAS I - VI)
+  // =====================================================================================
+  const PERIODE_TRIWULAN_INFO = {
+    'Triwulan 1': 'TW I: Juli – September (Dilaporkan Minggu ke-3 Bulan September)',
+    'Triwulan 2': 'TW II: Oktober – Desember (Dilaporkan Minggu ke-3 Bulan Desember)',
+    'Triwulan 3': 'TW III: Januari – Maret (Dilaporkan Minggu ke-3 Bulan Maret)',
+    'Triwulan 4': 'TW IV: April – Juni (Dilaporkan Minggu ke-3 Bulan Juni)'
+  };
+
+  const INDIKATOR_KARAKTER_PANDUAN = [
+    {
+      kode: 'karakter_teratur',
+      label: 'Kebiasaan Belajar Teratur',
+      deskripsi: 'Murid menunjukkan kebiasaan belajar teratur (kehadiran di sekolah, mengerjakan tugas, membawa perlengkapan belajar, mengikuti pembelajaran dengan sungguh-sungguh dan tertib) — Target ≥ 85%'
+    },
+    {
+      kode: 'karakter_tekun',
+      label: 'Tidak Mudah Menyerah (Tekun)',
+      deskripsi: 'Murid tidak mudah menyerah saat belajar dan menghadapi soal literasi dan numerasi — Target ≥ 85%'
+    },
+    {
+      kode: 'karakter_mandiri',
+      label: 'Mandiri Menyelesaikan Tugas',
+      deskripsi: 'Murid mampu menyelesaikan tugas literasi dan numerasi secara mandiri — Target ≥ 85%'
+    }
+  ];
+
+  const PANDUAN_LITNUM_SD = {
+    1: {
+      nama_tingkat: 'Kelas I (Satu)',
+      target_tahunan_literasi: [
+        '1. Mengenal huruf, bunyi huruf, dan suku kata.',
+        '2. Membaca kata dan kalimat sederhana (3-5 kata).',
+        '3. Memahami isi teks sangat pendek (2-3 kalimat).',
+        '4. Menjawab pertanyaan sederhana tentang teks.',
+        '5. Menceritakan kembali isi bacaan secara lisan.'
+      ],
+      target_tahunan_numerasi: [
+        '1. Mengenal bilangan sampai 100.',
+        '2. Membandingkan dan mengurutkan bilangan.',
+        '3. Melakukan penjumlahan dan pengurangan sederhana sampai 20.',
+        '4. Memahami konsep lebih besar dan lebih kecil.'
+      ],
+      triwulan: {
+        'Triwulan 1': {
+          lit_indikator: 'Mengenal huruf, bunyi huruf, dan suku kata (Mengenal/hafal seluruh huruf dan bunyi).',
+          lit_contoh: 'Sebutkan huruf yang ditunjuk berikut: B, M, S, L, K, A, D, U, E, I, dan seterusnya.',
+          num_indikator: 'Mengenal bilangan sampai 100.',
+          num_contoh: '1) Sebutkan bilangan setelah 27! 2) Tuliskan bilangan sebelum 50! 3) Lingkari bilangan terbesar: 12, 35, 9, 28.'
+        },
+        'Triwulan 2': {
+          lit_indikator: 'Membaca suku kata dan kata sederhana (dua suku kata) serta kalimat sederhana (3-5 kata).',
+          lit_contoh: '1) Bacalah suku kata berikut: ba - yi - bu - se - to. 2) Bacalah kata berikut: batu, meja, sapi, lima.',
+          num_indikator: 'Membandingkan dan mengurutkan bilangan.',
+          num_contoh: '1) Manakah yang lebih besar: 45 atau 32? 2) Urutkan dari yang terkecil: 14, 8, 20, 11. 3) Beri tanda >, <, = pada 17 ... 19 dan 25 ... 25.'
+        },
+        'Triwulan 3': {
+          lit_indikator: 'Membaca kalimat sederhana (3-5 kata) dan memahami isi teks sangat pendek (2-3 kalimat).',
+          lit_contoh: 'Bacalah kalimat berikut: • Sita makan roti • Budi punya bola merah.',
+          num_indikator: 'Melakukan penjumlahan dan pengurangan sederhana sampai 20.',
+          num_contoh: '1) 8 + 6 = ... 2) 15 - 7 = ... 3) Beni memiliki 12 permen. Ia memberikan 5 kepada temannya. Berapa sisa permen Beni?'
+        },
+        'Triwulan 4': {
+          lit_indikator: 'Memahami isi teks sangat pendek (2-3 kalimat), menjawab pertanyaan sederhana tentang teks, dan menceritakan kembali isi bacaan secara lisan.',
+          lit_contoh: 'Teks: "Adi punya kucing. Kucing itu berwarna putih." Soal: 1) Siapa yang punya kucing? 2) Apa warna kucing itu? 3) Ceritakan kembali isi teks dengan bahasamu sendiri.',
+          num_indikator: 'Memahami konsep lebih besar dan lebih kecil.',
+          num_contoh: '1) Manakah yang lebih kecil: 32 atau 18? 2) Tuliskan dua bilangan yang lebih besar dari 40! 3) Pilih tanda yang tepat: 27 ... 19 dan 8 ... 14.'
+        }
+      }
+    },
+    2: {
+      nama_tingkat: 'Kelas II (Dua)',
+      target_tahunan_literasi: [
+        '1. Membaca teks pendek 1 paragraf dengan lancar.',
+        '2. Menemukan informasi dasar (siapa, apa, di mana).',
+        '3. Menceritakan kembali isi teks secara sederhana.',
+        '4. Menulis kalimat sederhana dengan tanda baca dasar.'
+      ],
+      target_tahunan_numerasi: [
+        '1. Penjumlahan hingga 100.',
+        '2. Pengurangan hingga 100.',
+        '3. Perkalian dasar (2, 3, 4, 5).',
+        '4. Memecahkan soal cerita satu langkah.'
+      ],
+      triwulan: {
+        'Triwulan 1': {
+          lit_indikator: 'Membaca teks pendek 1 paragraf dengan lancar.',
+          lit_contoh: 'Teks: "Ani suka menanam bunga. Ada banyak bunga di halaman rumah. Ia merawat bunga setiap pagi." Soal: 1) Bacalah teks dengan lantang! 2) Kata apa yang menunjukkan kegiatan Ani?',
+          num_indikator: 'Penjumlahan hingga 100.',
+          num_contoh: '1) 45 + 32 = ... 2) 67 + 12 = ... 3) Tono memiliki 38 kelereng. Ia membeli lagi 25 kelereng. Berapa jumlah kelereng Tono sekarang?'
+        },
+        'Triwulan 2': {
+          lit_indikator: 'Menemukan informasi dasar (siapa, apa, di mana).',
+          lit_contoh: 'Teks: "Rudi bermain bola di lapangan bersama teman-temannya." Soal: 1) Siapa yang bermain bola? 2) Di mana Rudi bermain? 3) Apa yang dilakukan Rudi?',
+          num_indikator: 'Pengurangan hingga 100.',
+          num_contoh: '1) 90 - 35 = ... 2) 72 - 48 = ... 3) Ibu membeli 80 apel. 27 apel sudah terjual. Berapa apel yang tersisa?'
+        },
+        'Triwulan 3': {
+          lit_indikator: 'Menceritakan kembali isi teks secara sederhana.',
+          lit_contoh: 'Teks: "Pagi ini cuaca cerah. Murid-murid melakukan senam di halaman sekolah." Soal: 1) Ceritakan kembali isi teks dengan bahasamu sendiri. 2) Siapa yang melakukan senam?',
+          num_indikator: 'Perkalian dasar (2, 3, 4, 5).',
+          num_contoh: '1) 3 × 4 = ... 2) 5 × 2 = ... 3) Ada 4 kotak. Setiap kotak berisi 3 pensil. Berapa jumlah pensil seluruhnya?'
+        },
+        'Triwulan 4': {
+          lit_indikator: 'Menulis kalimat sederhana dengan tanda baca dasar.',
+          lit_contoh: '1) Buatlah 2 kalimat sederhana menggunakan kata: sekolah, ibu. 2) Tambahkan tanda titik (.) di akhir kalimatmu!',
+          num_indikator: 'Memecahkan soal cerita satu langkah.',
+          num_contoh: '1) Di kelas ada 24 kursi. 6 kursi dipakai murid. Berapa kursi yang kosong? 2) Ayah membeli 3 bungkus roti. Setiap bungkus berisi 4 roti. Berapa jumlah roti ayah?'
+        }
+      }
+    },
+    3: {
+      nama_tingkat: 'Kelas III (Tiga)',
+      target_tahunan_literasi: [
+        '1. Mengidentifikasi ide pokok paragraf.',
+        '2. Menemukan informasi penting dalam teks.',
+        '3. Membandingkan dua informasi sederhana.',
+        '4. Menulis paragraf pendek runtut.'
+      ],
+      target_tahunan_numerasi: [
+        '1. Perkalian dasar (6, 7, 8, 9).',
+        '2. Pembagian dasar.',
+        '3. Memahami pecahan sederhana (1/2, 1/3, 1/4).',
+        '4. Menyelesaikan soal cerita dua langkah.'
+      ],
+      triwulan: {
+        'Triwulan 1': {
+          lit_indikator: 'Mengidentifikasi ide pokok paragraf.',
+          lit_contoh: 'Teks: "Kebersihan kelas harus dijaga. Perlu dibentuk petugas kebersihan. Setiap murid bertanggung jawab merapikan bangkunya." Soal: 1) Apa ide pokok paragraf tersebut? 2) Tuliskan satu informasi penting dari paragraf.',
+          num_indikator: 'Perkalian dasar (6, 7, 8, 9).',
+          num_contoh: '1) 6 × 7 = ... 2) 9 × 8 = ... 3) Ibu membeli 7 kotak telur. Setiap kotak berisi 6 telur. Berapa telur yang dibeli ibu?'
+        },
+        'Triwulan 2': {
+          lit_indikator: 'Menemukan informasi penting dalam teks.',
+          lit_contoh: 'Teks: "Air sangat penting bagi makhluk hidup. Semua makhluk hidup butuh air. Tanpa air, manusia dan hewan tidak dapat bertahan hidup." Soal: 1) Apa informasi penting dari teks tersebut? 2) Mengapa air penting?',
+          num_indikator: 'Pembagian dasar.',
+          num_contoh: '1) 18 ÷ 3 = ... 2) 24 ÷ 6 = ... 3) Siti memiliki 20 kue dan ingin membaginya kepada 5 teman secara rata. Berapa kue yang diterima tiap teman?'
+        },
+        'Triwulan 3': {
+          lit_indikator: 'Membandingkan dua informasi sederhana.',
+          lit_contoh: 'Teks 1: "Kucing suka makan ikan." Teks 2: "Kelinci suka makan wortel." Soal: 1) Apa perbedaan makanan kucing dan kelinci? 2) Apa persamaannya?',
+          num_indikator: 'Memahami pecahan sederhana (1/2, 1/3, 1/4).',
+          num_contoh: '1) Gambar sebuah lingkaran lalu arsirlah 1/2 bagiannya. 2) Manakah pecahan yang lebih besar: 1/2 atau 1/3? 3) Jika kue dibagi menjadi 4 bagian sama besar dan Ani memakan 1 bagian, berapa bagian yang dimakan Ani?'
+        },
+        'Triwulan 4': {
+          lit_indikator: 'Menulis paragraf pendek runtut.',
+          lit_contoh: 'Tulislah sebuah paragraf 3-4 kalimat tentang kegiatanmu di hari Minggu, dengan urutan yang benar (awal - tengah - akhir).',
+          num_indikator: 'Menyelesaikan soal cerita dua langkah.',
+          num_contoh: '1) Budi memiliki 40 kelereng. Ia memberi 12 kepada Adi dan membeli lagi 8. Berapa kelereng Budi sekarang? 2) Ibu membeli 3 kantong jeruk. Setiap kantong berisi 5 jeruk. Dua jeruk rusak. Berapa jeruk bagus yang tersisa?'
+        }
+      }
+    },
+    4: {
+      nama_tingkat: 'Kelas IV (Empat)',
+      target_tahunan_literasi: [
+        '1. Menemukan informasi penting dalam teks informatif.',
+        '2. Menjelaskan hubungan antar informasi dalam teks.',
+        '3. Menyimpulkan isi teks.',
+        '4. Menafsirkan informasi tersirat.'
+      ],
+      target_tahunan_numerasi: [
+        '1. Menggunakan operasi campuran bilangan.',
+        '2. Menggunakan pecahan senilai.',
+        '3. Menafsirkan data pada tabel/grafik.',
+        '4. Menyelesaikan masalah kontekstual dua langkah.'
+      ],
+      triwulan: {
+        'Triwulan 1': {
+          lit_indikator: 'Menemukan informasi penting dalam teks informatif.',
+          lit_contoh: 'Teks: "Hutan mangrove banyak ditemukan di daerah pesisir. Akar mangrove dapat menahan abrasi dan menjadi tempat hidup berbagai hewan laut kecil." Pertanyaan: Apa manfaat utama hutan mangrove yang disebutkan dalam teks?',
+          num_indikator: 'Menggunakan operasi campuran bilangan.',
+          num_contoh: 'Seorang pedagang memiliki 48 buah jeruk. Ia menjual 15 buah pada pagi hari dan 13 buah pada siang hari. Sore hari ia membeli lagi 20 buah. Berapa jumlah jeruk pedagang sekarang?'
+        },
+        'Triwulan 2': {
+          lit_indikator: 'Menjelaskan hubungan antar informasi dalam teks.',
+          lit_contoh: 'Teks: "Sampah plastik sulit terurai di alam. Karena itu penggunaan plastik sekali pakai sebaiknya dikurangi." Pertanyaan: Mengapa penggunaan plastik sekali pakai perlu dikurangi?',
+          num_indikator: 'Menggunakan pecahan senilai.',
+          num_contoh: 'Berikan contoh pecahan lain yang senilai dengan 1/2!'
+        },
+        'Triwulan 3': {
+          lit_indikator: 'Menyimpulkan isi teks.',
+          lit_contoh: 'Teks: "Setiap pagi Andi bersepeda ke sekolah. Selain menyehatkan tubuh, bersepeda juga tidak menimbulkan polusi." Pertanyaan: Apa kesimpulan dari teks tersebut?',
+          num_indikator: 'Menafsirkan data pada tabel/grafik.',
+          num_contoh: 'Tabel jumlah buku yang dibaca murid dalam seminggu: Ani: 3, Budi: 5, Siti: 2, Rina: 4. Pertanyaan: Urutkan pembaca buku mulai dari yang paling banyak!'
+        },
+        'Triwulan 4': {
+          lit_indikator: 'Menafsirkan informasi tersirat.',
+          lit_contoh: 'Teks: "Rina selalu membawa botol minum sendiri ke sekolah agar tidak membeli minuman kemasan." Pertanyaan: Apa tujuan Rina melakukan hal tersebut?',
+          num_indikator: 'Menyelesaikan masalah kontekstual dua langkah.',
+          num_contoh: 'Sebuah perpustakaan memiliki 125 buku cerita. Sebanyak 37 buku dipinjam murid dan kemudian perpustakaan membeli 25 buku baru. Berapa jumlah buku cerita sekarang?'
+        }
+      }
+    },
+    5: {
+      nama_tingkat: 'Kelas V (Lima)',
+      target_tahunan_literasi: [
+        '1. Mengidentifikasi hubungan sebab-akibat dalam teks.',
+        '2. Membandingkan informasi dari dua teks.',
+        '3. Menganalisis isi teks informatif.',
+        '4. Mengevaluasi isi teks sederhana.'
+      ],
+      target_tahunan_numerasi: [
+        '1. Menggunakan operasi pecahan.',
+        '2. Menggunakan desimal.',
+        '3. Menafsirkan grafik.',
+        '4. Menyelesaikan masalah kontekstual multi langkah.'
+      ],
+      triwulan: {
+        'Triwulan 1': {
+          lit_indikator: 'Mengidentifikasi hubungan sebab-akibat dalam teks.',
+          lit_contoh: 'Teks: "Hujan deras sepanjang malam menyebabkan sungai meluap sehingga beberapa rumah warga terendam banjir." Pertanyaan: Apa penyebab terjadinya banjir menurut teks tersebut?',
+          num_indikator: 'Menggunakan operasi pecahan.',
+          num_contoh: 'Ibu menggunakan 3/4 kg gula untuk membuat kue dan 1/8 kg untuk membuat minuman. Berapa kg gula yang digunakan seluruhnya?'
+        },
+        'Triwulan 2': {
+          lit_indikator: 'Membandingkan informasi dari dua teks.',
+          lit_contoh: 'Teks 1: "Sepeda adalah alat transportasi ramah lingkungan." Teks 2: "Sepeda motor lebih cepat digunakan untuk perjalanan jauh." Pertanyaan: Apa perbedaan keunggulan kedua alat transportasi tersebut?',
+          num_indikator: 'Menggunakan desimal.',
+          num_contoh: 'Harga sebuah buku Rp12.500 dan pensil Rp3.750. Berapa total harga keduanya?'
+        },
+        'Triwulan 3': {
+          lit_indikator: 'Menganalisis isi teks informatif.',
+          lit_contoh: 'Teks tentang manfaat olahraga. Pertanyaan: Sebutkan dua manfaat olahraga yang disebutkan dalam teks!',
+          num_indikator: 'Menafsirkan grafik.',
+          num_contoh: 'Grafik menunjukkan jumlah pengunjung perpustakaan Senin-Jumat. Pertanyaan: Pada hari apa jumlah pengunjung paling sedikit?'
+        },
+        'Triwulan 4': {
+          lit_indikator: 'Mengevaluasi isi teks sederhana.',
+          lit_contoh: 'Teks: "Semua murid harus membawa kendaraan bermotor ke sekolah agar tidak terlambat." Pertanyaan: Apakah pernyataan tersebut tepat? Jelaskan alasanmu.',
+          num_indikator: 'Menyelesaikan masalah kontekstual multi langkah.',
+          num_contoh: 'Seorang pedagang memiliki 25 kg beras. Ia menjual 8 kg pada pagi hari dan 7 kg pada siang hari. Kemudian ia membeli lagi 10 kg. Berapa kg beras yang dimiliki sekarang?'
+        }
+      }
+    },
+    6: {
+      nama_tingkat: 'Kelas VI (Enam)',
+      target_tahunan_literasi: [
+        '1. Menemukan ide utama dan informasi penting.',
+        '2. Menyimpulkan isi teks.',
+        '3. Mengintegrasikan informasi dari dua teks.',
+        '4. Mengevaluasi isi teks dengan alasan logis.'
+      ],
+      target_tahunan_numerasi: [
+        '1. Operasi pecahan campuran.',
+        '2. Menggunakan perbandingan.',
+        '3. Menafsirkan data tabel/grafik.',
+        '4. Masalah kontekstual kompleks.'
+      ],
+      triwulan: {
+        'Triwulan 1': {
+          lit_indikator: 'Menemukan ide utama dan informasi penting.',
+          lit_contoh: 'Teks tentang pentingnya menjaga kebersihan lingkungan. Pertanyaan: Apa ide utama dari teks tersebut?',
+          num_indikator: 'Operasi pecahan campuran.',
+          num_contoh: 'Hitung hasil dari 2 1/2 + 1 3/4 = ...'
+        },
+        'Triwulan 2': {
+          lit_indikator: 'Menyimpulkan isi teks.',
+          lit_contoh: 'Teks tentang penghematan energi listrik. Pertanyaan: Apa kesimpulan yang dapat diambil dari teks tersebut?',
+          num_indikator: 'Menggunakan perbandingan.',
+          num_contoh: 'Perbandingan jumlah murid laki-laki dan perempuan di kelas adalah 3 : 4. Jika jumlah murid laki-laki 15 orang, berapa jumlah murid perempuan?'
+        },
+        'Triwulan 3': {
+          lit_indikator: 'Mengintegrasikan informasi dari dua teks.',
+          lit_contoh: 'Teks 1 membahas energi matahari, teks 2 membahas energi angin. Pertanyaan: Apa persamaan kedua sumber energi tersebut?',
+          num_indikator: 'Menafsirkan data tabel/grafik.',
+          num_contoh: 'Diagram menunjukkan hasil panen padi tiga desa. Pertanyaan: Desa mana yang menghasilkan panen terbanyak?'
+        },
+        'Triwulan 4': {
+          lit_indikator: 'Mengevaluasi isi teks dengan alasan logis.',
+          lit_contoh: 'Teks: "Menanam pohon tidak terlalu penting bagi lingkungan." Pertanyaan: Apakah kamu setuju dengan pernyataan tersebut? Jelaskan alasanmu berdasarkan pengetahuanmu.',
+          num_indikator: 'Masalah kontekstual kompleks.',
+          num_contoh: 'Sebuah toko memiliki 120 buku. Hari pertama terjual 35 buku, hari kedua terjual 28 buku, dan toko membeli lagi 40 buku baru. Berapa jumlah buku di toko sekarang?'
+        }
+      }
+    }
+  };
+
+  function getPanduanLitnumByTingkatAndTriwulan(tingkat, triwulan) {
+    const t = Number(tingkat) || 5;
+    const kelasData = PANDUAN_LITNUM_SD[t] || PANDUAN_LITNUM_SD[5];
+    const twData = kelasData.triwulan[triwulan] || kelasData.triwulan['Triwulan 1'];
+    return {
+      tingkat: t,
+      nama_tingkat: kelasData.nama_tingkat,
+      target_tahunan_literasi: kelasData.target_tahunan_literasi,
+      target_tahunan_numerasi: kelasData.target_tahunan_numerasi,
+      ...twData
+    };
+  }
+
   const DEFAULT_BANNER_IMG = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80';
 
   // MINIMAL DUMMY DATA (Hanya digunakan jika IS_PREVIEW === true)
@@ -699,9 +993,9 @@
         npsn: '40201234',
         kepala_sekolah: 'Hj. Ratna Dewi, S.Pd., M.Pd.',
         nip_kepsek: '19720514 199603 2 004',
-        kop_baris1: 'PEMERINTAH KOTA PALU',
-        kop_baris2: 'DINAS PENDIDIKAN DAN KEBUDAYAAN',
-        alamat_sekolah: 'Jl. Pendidikan No. 45, Kec. Palu Timur, Kota Palu • Email: sdn1harapan@sch.id',
+        kop_baris1: 'PEMERINTAH KABUPATEN DONGGALA',
+        kop_baris2: 'DINAS PENDIDIKAN, PEMUDA, DAN OLAHRAGA',
+        alamat_sekolah: 'Jl. Pendidikan No. 45, Kab. Donggala • Email: sdn1harapan@sch.id',
         logo_kiri_url: 'https://cdn-icons-png.flaticon.com/512/3429/3429440.png',
         logo_kanan_url: 'https://cdn-icons-png.flaticon.com/512/2997/2997322.png',
         banner_url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
@@ -715,9 +1009,9 @@
         npsn: '40201234',
         kepala_sekolah: 'Hj. Ratna Dewi, S.Pd., M.Pd.',
         nip_kepsek: '19720514 199603 2 004',
-        kop_baris1: 'PEMERINTAH KOTA PALU',
-        kop_baris2: 'DINAS PENDIDIKAN DAN KEBUDAYAAN',
-        alamat_sekolah: 'Jl. Pendidikan No. 45, Kec. Palu Timur, Kota Palu • Email: sdn1harapan@sch.id',
+        kop_baris1: 'PEMERINTAH KABUPATEN DONGGALA',
+        kop_baris2: 'DINAS PENDIDIKAN, PEMUDA, DAN OLAHRAGA',
+        alamat_sekolah: 'Jl. Pendidikan No. 45, Kab. Donggala • Email: sdn1harapan@sch.id',
         logo_kiri_url: 'https://cdn-icons-png.flaticon.com/512/3429/3429440.png',
         logo_kanan_url: 'https://cdn-icons-png.flaticon.com/512/2997/2997322.png',
         banner_url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
@@ -757,13 +1051,51 @@
       { id: 'nil-4', id_siswa: 'sis-3', id_kelas: 'kls-6a', mata_pelajaran: 'PJOK (Olahraga)', nilai_formatif: 92, nilai_sumatif: 90, nilai_pts: 88, nilai_pas: 94, nilai_akhir: 91.0, predikat: 'A', tahun_pelajaran: '2026/2027 - Ganjil', semester: 'Ganjil' }
     ],
     target_litnum: [
-      { id: 'ln-1', id_siswa: 'sis-1', id_kelas: 'kls-5a', triwulan: 'Triwulan 1', target_literasi_desc: 'Mampu memahami isi teks narasi & menyimpulkan ide pokok paragraf', status_literasi: 'Tercapai', skor_literasi: 88, target_numerasi_desc: 'Mampu menyelesaikan operasi hitung pecahan dan desimal kontekstual', status_numerasi: 'Tercapai', skor_numerasi: 90, catatan_guru: 'Sangat baik dan gemar membaca buku cerita di pojok baca', nama_guru: 'Siti Aminah, S.Pd.SD', tahun_pelajaran: '2026/2027 - Ganjil' },
-      { id: 'ln-2', id_siswa: 'sis-2', id_kelas: 'kls-5a', triwulan: 'Triwulan 1', target_literasi_desc: 'Mampu memahami isi teks narasi & menyimpulkan ide pokok paragraf', status_literasi: 'Tercapai', skor_literasi: 82, target_numerasi_desc: 'Mampu menyelesaikan operasi hitung pecahan dan desimal kontekstual', status_numerasi: 'Belum Tercapai', skor_numerasi: 68, catatan_guru: 'Perlu pendampingan latihan perkalian & pembagian pecahan sederhana', nama_guru: 'Siti Aminah, S.Pd.SD', tahun_pelajaran: '2026/2027 - Ganjil' },
-      { id: 'ln-3', id_siswa: 'sis-3', id_kelas: 'kls-6a', triwulan: 'Triwulan 1', target_literasi_desc: 'Memahami aturan permainan olahraga & instruksi kesehatan', status_literasi: 'Tercapai', skor_literasi: 90, target_numerasi_desc: 'Menghitung denyut nadi latihan & statistik kebugaran', status_numerasi: 'Tercapai', skor_numerasi: 89, catatan_guru: 'Aktif dan disiplin dalam praktik lapangan', nama_guru: 'Budi Santoso, S.Pd.Or', tahun_pelajaran: '2026/2027 - Ganjil' }
+      { id: 'ln-1', id_siswa: 'sis-1', id_kelas: 'kls-5a', triwulan: 'Triwulan 1', target_literasi_desc: 'Mengidentifikasi hubungan sebab-akibat dalam teks.', status_literasi: 'Tercapai', skor_literasi: 88, target_numerasi_desc: 'Menggunakan operasi pecahan.', status_numerasi: 'Tercapai', skor_numerasi: 90, karakter_teratur: 'Memenuhi', karakter_tekun: 'Memenuhi', karakter_mandiri: 'Memenuhi', catatan_guru: 'Tuntas mengidentifikasi sebab-akibat dalam teks & penjumlahan pecahan 3/4 + 1/8', nama_guru: 'Siti Aminah, S.Pd.SD', tahun_pelajaran: '2026/2027 - Ganjil' },
+      { id: 'ln-2', id_siswa: 'sis-2', id_kelas: 'kls-5a', triwulan: 'Triwulan 1', target_literasi_desc: 'Mengidentifikasi hubungan sebab-akibat dalam teks.', status_literasi: 'Tercapai', skor_literasi: 82, target_numerasi_desc: 'Menggunakan operasi pecahan.', status_numerasi: 'Belum Tercapai', skor_numerasi: 68, karakter_teratur: 'Memenuhi', karakter_tekun: 'Belum Memenuhi', karakter_mandiri: 'Memenuhi', catatan_guru: 'Perlu pendampingan menyamakan penyebut pada operasi hitung pecahan', nama_guru: 'Siti Aminah, S.Pd.SD', tahun_pelajaran: '2026/2027 - Ganjil' },
+      { id: 'ln-3', id_siswa: 'sis-3', id_kelas: 'kls-6a', triwulan: 'Triwulan 1', target_literasi_desc: 'Menemukan ide utama dan informasi penting.', status_literasi: 'Tercapai', skor_literasi: 90, target_numerasi_desc: 'Operasi pecahan campuran.', status_numerasi: 'Tercapai', skor_numerasi: 89, karakter_teratur: 'Memenuhi', karakter_tekun: 'Memenuhi', karakter_mandiri: 'Memenuhi', catatan_guru: 'Tuntas menemukan ide utama teks & menghitung 2 1/2 + 1 3/4 secara mandiri', nama_guru: 'Budi Santoso, S.Pd.Or', tahun_pelajaran: '2026/2027 - Ganjil' }
     ],
     bimbingan_wali: [
       { id: 'bim-1', tanggal: '2026-11-07', id_siswa: 'sis-1', id_kelas: 'kls-5a', kategori: 'Prestasi', permasalahan: 'Juara 1 Lomba Cerdas Cermat Matematika Tingkat Kecamatan', tindak_lanjut: 'Pemberian apresiasi saat upacara Senin & pembinaan tingkat Kabupaten', status_bimbingan: 'Selesai', guru_pembimbing: 'Siti Aminah, S.Pd.SD', tahun_pelajaran: '2026/2027 - Ganjil' },
       { id: 'bim-2', tanggal: '2026-11-08', id_siswa: 'sis-2', id_kelas: 'kls-5a', kategori: 'Kesehatan', permasalahan: 'Siswa tidak hadir 2 hari karena demam tinggi', tindak_lanjut: 'Konfirmasi via WA ke Ibu Kartika & kirim materi belajar mandiri', status_bimbingan: 'Proses', guru_pembimbing: 'Siti Aminah, S.Pd.SD', tahun_pelajaran: '2026/2027 - Ganjil' }
+    ],
+    erapor_data: [
+      {
+        id: 'rap-1',
+        id_siswa: 'sis-1',
+        id_kelas: 'kls-5a',
+        fase: 'Fase C',
+        kokurikuler_p5: 'Ananda Ahmad Fauzan menunjukkan perkembangan Sangat Berkembang (SB) dalam projek Gaya Hidup Berkelanjutan dan Kearifan Lokal melalui dimensi Gotong Royong, Mandiri, dan Bernalar Kritis.',
+        ekskul_1_nama: 'Pramuka Penggalang',
+        ekskul_1_predikat: 'Sangat Baik',
+        ekskul_1_ket: 'Aktif memimpin regu dan disiplin mengikuti latihan rutin mingguan.',
+        ekskul_2_nama: 'Dokter Kecil / UKS',
+        ekskul_2_predikat: 'Baik',
+        ekskul_2_ket: 'Memahami pertolongan pertama dasar dan menjaga kebersihan lingkungan sekolah.',
+        catatan_wali: 'Selamat ananda Ahmad Fauzan! Pertahankan semangat belajar, sikap santun, dan prestasimu di semester berikutnya.',
+        status_kenaikan: 'Naik ke Kelas VI (Enam)',
+        capaian_custom_json: '{}',
+        tahun_pelajaran: '2026/2027 - Ganjil',
+        semester: 'Ganjil'
+      },
+      {
+        id: 'rap-2',
+        id_siswa: 'sis-2',
+        id_kelas: 'kls-5a',
+        fase: 'Fase C',
+        kokurikuler_p5: 'Ananda Nabila Putri menunjukkan perkembangan Berkembang Sesuai Harapan (BSH) dalam projek kolaborasi kebhinekaan global dan kreativitas karya daur ulang.',
+        ekskul_1_nama: 'Pramuka Penggalang',
+        ekskul_1_predikat: 'Baik',
+        ekskul_1_ket: 'Mengikuti kegiatan kepramukaan dengan tertib dan kooperatif.',
+        ekskul_2_nama: 'Seni Tari Tradisional',
+        ekskul_2_predikat: 'Sangat Baik',
+        ekskul_2_ket: 'Mampu menguasai gerak tari kreasi daerah dengan luwes dan percaya diri.',
+        catatan_wali: 'Tingkatkan terus semangat belajarmu terutama pada latihan soal numerasi, Ibu yakin Nabila pasti bisa lebih unggul!',
+        status_kenaikan: 'Naik ke Kelas VI (Enam)',
+        capaian_custom_json: '{}',
+        tahun_pelajaran: '2026/2027 - Ganjil',
+        semester: 'Ganjil'
+      }
     ]
   };
 
@@ -782,6 +1114,7 @@
     rekapNilaiFilter: 'ALL_MAPEL', // 'ALL_MAPEL' atau nama mapel spesifik
     jadwalHari: 'ALL',
     litnumTriwulan: 'Triwulan 1',
+    selectedRaporSiswaId: '',
     // Data Tables
     pengaturan_akademik: [],
     data_kelas: [],
@@ -792,7 +1125,8 @@
     jurnal_mengajar: [],
     buku_nilai: [],
     target_litnum: [],
-    bimbingan_wali: []
+    bimbingan_wali: [],
+    erapor_data: []
   };
 
   // HELPER FUNCTIONS
@@ -957,6 +1291,41 @@
     return 'D';
   }
 
+  // HELPER KURIKULUM MERDEKA: FASE & GENERATOR DESKRIPSI CAPAIAN KOMPETENSI OTOMATIS
+  function getFaseByTingkat(tingkat) {
+    const t = Number(tingkat) || 5;
+    if (t <= 2) return 'Fase A (Kelas 1 - 2)';
+    if (t <= 4) return 'Fase B (Kelas 3 - 4)';
+    return 'Fase C (Kelas 5 - 6)';
+  }
+
+  function generateAutoCapaianDeskripsi(namaSiswa, mapel, nilaiAkhir) {
+    const namaPanggilan = (namaSiswa || 'Peserta didik').split(' ')[0];
+    if (nilaiAkhir === undefined || nilaiAkhir === null || nilaiAkhir === '-') {
+      return {
+        tertinggi: `Menunjukkan penguasaan yang baik dalam memahami konsep dasar ${mapel}.`,
+        peningkatan: `Perlu bimbingan lebih lanjut dalam menyelesaikan latihan evaluasi ${mapel}.`
+      };
+    }
+    const n = Number(nilaiAkhir) || 0;
+    if (n >= 88) {
+      return {
+        tertinggi: `Ananda ${namaPanggilan} menunjukkan penguasaan yang sangat baik dalam memahami, menerapkan, dan menyelesaikan tujuan pembelajaran ${mapel} secara mandiri maupun kolaboratif.`,
+        peningkatan: `Perlu pengayaan tantangan soal penalaran tingkat lanjut (HOTS) pada mata pelajaran ${mapel} agar potensi akademik makin optimal.`
+      };
+    }
+    if (n >= 76) {
+      return {
+        tertinggi: `Ananda ${namaPanggilan} menunjukkan penguasaan yang baik dalam mencapai tujuan pembelajaran esensial pada mata pelajaran ${mapel}.`,
+        peningkatan: `Perlu peningkatan ketelitian dan penguatan latihan mandiri pada beberapa sub-materi aplikatif ${mapel}.`
+      };
+    }
+    return {
+      tertinggi: `Ananda ${namaPanggilan} mulai mampu mengenal konsep dasar pada materi pembelajaran ${mapel} dengan pendampingan guru.`,
+      peningkatan: `Perlu bimbingan intensif dan pendampingan belajar rutin di rumah pada materi dasar ${mapel}.`
+    };
+  }
+
   // DATA ENGINE (HYBRID PREVIEW MEMORY & SUPABASE CRUD)
   async function loadAllData() {
     if (IS_PREVIEW) {
@@ -986,7 +1355,8 @@
         'jurnal_mengajar',
         'buku_nilai',
         'target_litnum',
-        'bimbingan_wali'
+        'bimbingan_wali',
+        'erapor_data'
       ];
       const results = await Promise.all(tables.map(t => supabase.from(t).select('*')));
       results.forEach((res, idx) => {
@@ -1543,6 +1913,9 @@
       case 'nilai':
         container.innerHTML = renderNilaiView();
         break;
+      case 'erapor':
+        container.innerHTML = renderERaporView();
+        break;
       case 'literasi':
         container.innerHTML = renderLiterasiNumerasiView();
         break;
@@ -1556,66 +1929,74 @@
   }
 
   // ============================================================================
-  // 1. DASHBOARD VIEW
+  // 1. DASHBOARD VIEW (CLAYMORPHISM BENTO GRID)
   // ============================================================================
   function renderDashboardView() {
     const u = state.currentUser;
-    const students = getAccessibleStudents('ALL');
-    const classes = getAccessibleClasses();
+    const students = getAccessibleStudents();
     const bannerImg = getActiveBannerUrl();
+    const todayStr = new Date().toISOString().split('T')[0];
 
-    const todayLogs = state.daftar_hadir.filter(a => !isClassLocked() || a.id_kelas === u.id_kelas_ampu);
-    const hadirCount = todayLogs.filter(a => a.status_hadir === 'H').length;
-    const pctHadir = todayLogs.length ? Math.round((hadirCount / todayLogs.length) * 100) : 100;
+    const absToday = state.daftar_hadir.filter(a => a.tanggal === todayStr && (!isClassLocked() || a.id_kelas === u.id_kelas_ampu));
+    const hadirCount = absToday.filter(a => a.status_hadir === 'H').length;
+    const sakitCount = absToday.filter(a => a.status_hadir === 'S').length;
+    const izinCount = absToday.filter(a => a.status_hadir === 'I').length;
+    const alpaCount = absToday.filter(a => a.status_hadir === 'A').length;
 
-    const jurnalCount = state.jurnal_mengajar.filter(j => !isClassLocked() || j.id_kelas === u.id_kelas_ampu).length;
-    const litnumLogs = state.target_litnum.filter(r => !isClassLocked() || r.id_kelas === u.id_kelas_ampu);
-    const litTercapai = litnumLogs.filter(r => r.status_literasi === 'Tercapai' && r.status_numerasi === 'Tercapai').length;
+    const jurnalList = state.jurnal_mengajar.filter(j => !isClassLocked() || j.id_kelas === u.id_kelas_ampu);
+    const jadwalList = state.jadwal_pelajaran.filter(j => !isClassLocked() || j.id_kelas === u.id_kelas_ampu);
+
+    const tw = state.litnumTriwulan;
+    let litOk = 0, numOk = 0;
+    students.forEach(s => {
+      const r = state.target_litnum.find(x => x.id_siswa === s.id && x.triwulan === tw);
+      if (r?.status_literasi === 'Tercapai') litOk++;
+      if (r?.status_numerasi === 'Tercapai') numOk++;
+    });
+    const pctLit = students.length ? Math.round((litOk / students.length) * 100) : 0;
+    const pctNum = students.length ? Math.round((numOk / students.length) * 100) : 0;
 
     return `
-      <!-- Hero Banner with Custom Uploadable Photo -->
+      <!-- Hero Banner -->
       <div class="clay-hero p-6 sm:p-7 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
         <div class="absolute inset-0 z-0 opacity-25">
-          <img src="${bannerImg}" alt="Banner Kelas" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+          <img src="${bannerImg}" class="w-full h-full object-cover" onerror="this.style.display='none'" />
         </div>
         <div class="absolute inset-0 z-0 bg-gradient-to-r from-[#C9B8F5]/95 via-[#B49EEB]/85 to-[#B49EEB]/60"></div>
 
         <div class="relative z-10 max-w-xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 text-[#2D264B] text-xs font-extrabold mb-3 shadow-xs">
-            <i class="ph-fill ph-sparkle text-[#7E65D4]"></i>
-            <span>${getActiveSchoolProfile().nama_sekolah} • T.P. ${state.activeTapel}</span>
-          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/75 text-[#2D264B] text-[11px] font-extrabold mb-3 shadow-xs">
+            <i class="ph-fill ph-sparkle text-amber-500"></i> Tahun Pelajaran ${state.activeTapel}
+          </span>
           <h2 class="font-display text-2xl sm:text-3xl font-black text-[#2D264B] leading-tight">
             Selamat Bertugas, ${u.nama.split(',')[0]}! ☀️
           </h2>
           <p class="text-xs sm:text-sm font-semibold text-[#2D264B]/85 mt-1.5 leading-relaxed">
             ${u.role === 'GURU_KELAS'
-              ? `Anda masuk sebagai <b>Wali ${getKelasName(u.id_kelas_ampu)}</b>. Pantau daftar hadir, jurnal mengajar, dan target literasi-numerasi siswa kelas Anda.`
+              ? `Anda masuk sebagai <b>Wali ${getKelasName(u.id_kelas_ampu)}</b>. Pantau kehadiran, jurnal harian, buku nilai, E-Rapor, dan target literasi-numerasi murid Anda.`
               : u.role === 'GURU_MAPEL'
-                ? `Anda masuk sebagai <b>Guru ${u.mapel_ampu}</b> dengan akses lintas seluruh kelas (Kelas 1 s.d. Kelas 6).`
-                : `Anda masuk sebagai <b>Administrator Sekolah</b>. Kelola data siswa/guru (.xlsx), kop sekolah 2 logo, dan rekap akademik.`
+                ? `Anda masuk sebagai <b>Guru Mata Pelajaran (${u.mapel_ampu})</b> dengan akses lintas Kelas 1 s.d. Kelas 6.`
+                : `Anda masuk sebagai <b>Administrator Sekolah</b>. Kelola master kelas, ekspor/impor Excel (.xlsx), kop sekolah 2 logo, dan rekapan capaian.`
             }
           </p>
           <div class="flex flex-wrap items-center gap-2.5 mt-4">
-            <button onclick="window.app.navigate('absensi')" class="clay-btn-primary px-5 py-2.5 text-xs font-extrabold flex items-center gap-2">
-              <i class="ph-fill ph-check-square-offset text-base"></i> ${u.role === 'ADMIN' ? 'Rekap Daftar Hadir' : 'Input Daftar Hadir'}
-            </button>
-            <button onclick="window.app.navigate('literasi')" class="clay-btn-soft px-4 py-2.5 text-xs font-extrabold flex items-center gap-2">
-              <i class="ph-fill ph-target text-[#EB7B6B] text-base"></i> Target Literasi & Numerasi
+            <button onclick="window.app.navigate('literasi')" class="clay-btn-primary px-5 py-2.5 text-xs font-extrabold flex items-center gap-2">
+              <i class="ph-fill ph-target text-base"></i> Target Literasi & Numerasi (${tw})
             </button>
             <button onclick="window.app.openQuickBannerModal()" class="clay-btn-soft px-4 py-2.5 text-xs font-extrabold flex items-center gap-1.5">
-              <i class="ph-bold ph-camera text-[#7E65D4]"></i> Ubah Foto Banner
+              <i class="ph-bold ph-image text-[#7E65D4]"></i> Ganti Foto Banner
             </button>
           </div>
         </div>
 
-        <div class="relative z-10 hidden sm:flex flex-col items-center bg-white/75 backdrop-blur-xs p-4 rounded-3xl shadow-lg border border-white min-w-[180px] text-center">
-          <div class="w-12 h-12 rounded-2xl bg-[#7E65D4] text-white flex items-center justify-center mb-2 shadow-md">
-            <i class="ph-fill ph-Chalkboard-teacher text-2xl"></i>
+        <div class="relative z-10 hidden sm:flex items-center gap-3 bg-white/80 backdrop-blur-xs p-4 rounded-3xl shadow-md">
+          <div class="w-14 h-14 rounded-2xl bg-[#8C72E2] text-white flex items-center justify-center font-display font-black text-2xl">
+            ${students.length}
           </div>
-          <div class="text-[11px] font-bold text-[#6E6888]">Status Akses</div>
-          <div class="text-sm font-extrabold text-[#2D264B] mt-0.5">${u.role === 'GURU_KELAS' ? getKelasName(u.id_kelas_ampu) : 'Semua Kelas'}</div>
-          <div class="text-[10px] font-bold text-emerald-700 mt-1">${students.length} Siswa Terdaftar</div>
+          <div>
+            <div class="text-xs font-extrabold text-[#2D264B]">Total Murid Terdata</div>
+            <div class="text-[11px] font-semibold text-[#6E6888]">${isClassLocked() ? getKelasName(u.id_kelas_ampu) : 'Seluruh Rombel Aktif'}</div>
+          </div>
         </div>
       </div>
 
@@ -1625,93 +2006,87 @@
           <div class="w-11 h-11 clay-icon-box bg-[#8C72E2] text-white flex items-center justify-center mb-3">
             <i class="ph-fill ph-users-three text-xl"></i>
           </div>
-          <div class="text-xs font-bold text-[#6E6888]">Total Siswa</div>
+          <div class="text-xs font-bold text-[#6E6888]">Peserta Didik</div>
           <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${students.length}</div>
-          <div class="text-[11px] font-extrabold text-emerald-700 mt-1">${classes.length} Rombongan Belajar</div>
+          <div class="text-[11px] font-extrabold text-emerald-700 mt-1">L: ${students.filter(s => s.jk === 'L').length} • P: ${students.filter(s => s.jk === 'P').length}</div>
         </div>
 
         <div onclick="window.app.navigate('absensi')" class="clay-stat-peach p-5 cursor-pointer hover:-translate-y-0.5 transition">
           <div class="w-11 h-11 clay-icon-box bg-[#EB7B6B] text-white flex items-center justify-center mb-3">
-            <i class="ph-fill ph-user-check text-xl"></i>
+            <i class="ph-fill ph-check-square-offset text-xl"></i>
           </div>
-          <div class="text-xs font-bold text-[#6E6888]">Rata-Rata Kehadiran</div>
-          <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${pctHadir}%</div>
-          <div class="text-[11px] font-extrabold text-rose-700 mt-1">${todayLogs.length} Catatan Presensi</div>
+          <div class="text-xs font-bold text-[#6E6888]">Presensi Tercatat</div>
+          <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${state.daftar_hadir.length}</div>
+          <div class="text-[11px] font-extrabold text-rose-700 mt-1">Hari ini: H:${hadirCount} S:${sakitCount} I:${izinCount} A:${alpaCount}</div>
         </div>
 
         <div onclick="window.app.navigate('literasi')" class="clay-stat-butter p-5 cursor-pointer hover:-translate-y-0.5 transition">
           <div class="w-11 h-11 clay-icon-box bg-[#F2B84B] text-white flex items-center justify-center mb-3">
-            <i class="ph-fill ph-target text-xl"></i>
+            <i class="ph-fill ph-book-open-text text-xl"></i>
           </div>
-          <div class="text-xs font-bold text-[#6E6888]">Tuntas Lit & Num</div>
-          <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${litTercapai} Siswa</div>
-          <div class="text-[11px] font-extrabold text-amber-700 mt-1">Evaluasi Triwulan Aktif</div>
+          <div class="text-xs font-bold text-[#6E6888]">Tuntas Literasi (${tw})</div>
+          <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${pctLit}%</div>
+          <div class="text-[11px] font-extrabold text-amber-800 mt-1">${litOk} dari ${students.length} murid</div>
         </div>
 
-        <div onclick="window.app.navigate('jurnal')" class="clay-stat-blue p-5 cursor-pointer hover:-translate-y-0.5 transition">
+        <div onclick="window.app.navigate('literasi')" class="clay-stat-blue p-5 cursor-pointer hover:-translate-y-0.5 transition">
           <div class="w-11 h-11 clay-icon-box bg-[#649BE6] text-white flex items-center justify-center mb-3">
-            <i class="ph-fill ph-notebook text-xl"></i>
+            <i class="ph-fill ph-calculator text-xl"></i>
           </div>
-          <div class="text-xs font-bold text-[#6E6888]">Jurnal Mengajar</div>
-          <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${jurnalCount}</div>
-          <div class="text-[11px] font-extrabold text-sky-700 mt-1">Pertemuan Tercatat</div>
+          <div class="text-xs font-bold text-[#6E6888]">Tuntas Numerasi (${tw})</div>
+          <div class="font-display text-2xl font-black text-[#2D264B] mt-0.5">${pctNum}%</div>
+          <div class="text-[11px] font-extrabold text-sky-800 mt-1">${numOk} dari ${students.length} murid</div>
         </div>
       </div>
 
-      <!-- Bottom 2-Column Bento Section -->
+      <!-- 2 Column Bento: Jurnal Mengajar & Jadwal Pelajaran -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div class="lg:col-span-7 clay-card p-5">
           <div class="flex items-center justify-between mb-4">
             <div>
               <h3 class="font-display font-extrabold text-base text-[#2D264B]">Jurnal Mengajar Terbaru</h3>
-              <p class="text-xs text-[#6E6888]">Riwayat pelaksanaan pembelajaran di kelas</p>
+              <p class="text-xs text-[#6E6888]">Catatan aktivitas KBM harian guru di kelas</p>
             </div>
-            <button onclick="window.app.navigate('jurnal')" class="clay-btn-soft px-3 py-1.5 text-xs font-bold">Lihat Semua</button>
+            <button onclick="window.app.navigate('jurnal')" class="clay-btn-soft px-3 py-1.5 text-xs font-extrabold text-[#7E65D4]">Lihat Semua</button>
           </div>
           <div class="space-y-2.5">
-            ${state.jurnal_mengajar
-              .filter(j => !isClassLocked() || j.id_kelas === u.id_kelas_ampu)
-              .slice(0, 4)
-              .map(j => `
-                <div class="p-3.5 rounded-2xl bg-white/80 flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-[#EDE6FA] text-[#7E65D4] flex items-center justify-center font-extrabold text-xs shrink-0">
-                      ${getKelasName(j.id_kelas).replace('Kelas ', '')}
-                    </div>
-                    <div>
-                      <div class="text-xs font-extrabold text-[#2D264B]">${j.mata_pelajaran} — ${j.materi}</div>
-                      <div class="text-[11px] text-[#6E6888]">${j.tanggal} • Jam ke ${j.jam_ke} • Oleh: ${j.nama_guru}</div>
-                    </div>
+            ${jurnalList.slice(0, 4).map(j => `
+              <div class="p-3.5 rounded-2xl bg-white/80 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-2xl bg-[#EDE6FA] text-[#7E65D4] flex items-center justify-center font-extrabold text-xs shrink-0">
+                    ${getKelasName(j.id_kelas).replace('Kelas ', '')}
                   </div>
-                  <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold shrink-0">
-                    Hadir: ${j.jml_hadir}
-                  </span>
+                  <div>
+                    <div class="text-xs font-extrabold text-[#2D264B]">${j.mata_pelajaran} — ${j.materi}</div>
+                    <div class="text-[11px] text-[#6E6888]">${j.tanggal} • Jam ${j.jam_ke} • Oleh: ${j.nama_guru}</div>
+                  </div>
                 </div>
-              `).join('') || `<p class="text-xs text-[#6E6888] py-4 text-center">Belum ada jurnal mengajar.</p>`}
+                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold shrink-0">
+                  Hadir: ${j.jml_hadir}
+                </span>
+              </div>
+            `).join('') || `<p class="text-xs text-[#6E6888] py-4 text-center">Belum ada jurnal mengajar.</p>`}
           </div>
         </div>
 
         <div class="lg:col-span-5 clay-card p-5">
           <div class="flex items-center justify-between mb-4">
             <div>
-              <h3 class="font-display font-extrabold text-base text-[#2D264B]">Jadwal Mengajar</h3>
-              <p class="text-xs text-[#6E6888]">Daftar jadwal KBM aktif</p>
+              <h3 class="font-display font-extrabold text-base text-[#2D264B]">Jadwal Pelajaran Aktif</h3>
+              <p class="text-xs text-[#6E6888]">Jadwal mingguan rombongan belajar</p>
             </div>
-            <button onclick="window.app.navigate('jadwal')" class="clay-btn-soft px-3 py-1.5 text-xs font-bold">Kelola</button>
+            <button onclick="window.app.navigate('jadwal')" class="clay-btn-soft px-3 py-1.5 text-xs font-extrabold text-[#7E65D4]">Kelola</button>
           </div>
           <div class="space-y-2.5">
-            ${state.jadwal_pelajaran
-              .filter(jd => !isClassLocked() || jd.id_kelas === u.id_kelas_ampu)
-              .slice(0, 4)
-              .map(jd => `
-                <div class="p-3.5 rounded-2xl bg-white/80 flex items-center justify-between gap-2">
-                  <div>
-                    <span class="px-2 py-0.5 rounded-md bg-[#FBF0D9] text-amber-800 text-[10px] font-extrabold">${jd.hari} • Jam ${jd.jam_ke}</span>
-                    <div class="text-xs font-extrabold text-[#2D264B] mt-1">${jd.mata_pelajaran}</div>
-                    <div class="text-[11px] text-[#6E6888]">${getKelasName(jd.id_kelas)} • ${jd.nama_guru}</div>
-                  </div>
+            ${jadwalList.slice(0, 4).map(jd => `
+              <div class="p-3.5 rounded-2xl bg-white/80 flex items-center justify-between gap-2">
+                <div>
+                  <span class="px-2 py-0.5 rounded bg-[#FADAD2] text-rose-900 text-[10px] font-extrabold">${jd.hari} • Jam ${jd.jam_ke}</span>
+                  <div class="text-xs font-extrabold text-[#2D264B] mt-1">${jd.mata_pelajaran}</div>
+                  <div class="text-[11px] text-[#6E6888]">${getKelasName(jd.id_kelas)} • ${jd.nama_guru}</div>
                 </div>
-              `).join('') || `<p class="text-xs text-[#6E6888] py-4 text-center">Belum ada jadwal pelajaran.</p>`}
+              </div>
+            `).join('') || `<p class="text-xs text-[#6E6888] py-4 text-center">Belum ada jadwal pelajaran.</p>`}
           </div>
         </div>
       </div>
@@ -1729,11 +2104,11 @@
       <div class="clay-card p-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 class="font-display font-extrabold text-base text-[#2D264B]">Daftar Rombongan Belajar (Kelas 1 s.d. Kelas 6)</h3>
-          <p class="text-xs text-[#6E6888]">Setiap kelas memiliki foto banner identitas masing-masing</p>
+          <p class="text-xs text-[#6E6888]">Setiap kelas memiliki wali kelas, tingkat acuan panduan literasi/numerasi, dan foto banner masing-masing</p>
         </div>
         ${isAdmin ? `
           <button onclick="window.app.openKelasModal()" class="clay-btn-primary px-4 py-2.5 text-xs font-extrabold flex items-center gap-1.5">
-            <i class="ph-bold ph-plus"></i> Tambah Kelas Baru
+            <i class="ph-bold ph-plus"></i> Tambah Rombel Kelas
           </button>
         ` : ''}
       </div>
@@ -1744,26 +2119,26 @@
           return `
             <div class="clay-card overflow-hidden flex flex-col justify-between">
               <div>
-                <div class="h-32 w-full relative bg-[#EDE6FA]">
+                <div class="h-28 w-full relative bg-[#EDE6FA]">
                   <img src="${k.banner_url || DEFAULT_BANNER_IMG}" class="w-full h-full object-cover" onerror="this.src='${DEFAULT_BANNER_IMG}'" />
-                  <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 text-[#2D264B] text-xs font-extrabold shadow">
-                    Tingkat ${k.tingkat}
+                  <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 text-[#2D264B] text-[11px] font-extrabold shadow">
+                    Tingkat Kelas ${k.tingkat || 5}
                   </span>
                 </div>
                 <div class="p-5">
                   <div class="flex items-center justify-between">
-                    <h4 class="font-display font-extrabold text-lg text-[#2D264B]">${k.nama_kelas}</h4>
-                    <span class="px-2.5 py-1 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-xs font-extrabold">${jmlSiswa} Siswa</span>
+                    <h4 class="font-display font-black text-lg text-[#2D264B]">${k.nama_kelas}</h4>
+                    <span class="px-2.5 py-0.5 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-xs font-extrabold">${jmlSiswa} Murid</span>
                   </div>
                   <p class="text-xs font-semibold text-[#6E6888] mt-1">Wali Kelas: <b class="text-[#2D264B]">${k.wali_kelas_nama || '-'}</b></p>
                 </div>
               </div>
-              <div class="px-5 pb-4 pt-2 border-t border-purple-100 flex items-center justify-between gap-2">
-                <button onclick="window.app.openKelasModal('${k.id}')" class="clay-btn-soft flex-1 py-2 text-xs font-extrabold flex items-center justify-center gap-1.5">
-                  <i class="ph-bold ph-image text-[#7E65D4]"></i> Edit / Ganti Banner
+              <div class="px-5 pb-4 pt-2 border-t border-purple-100 flex items-center justify-between">
+                <button onclick="window.app.openKelasModal('${k.id}')" class="clay-btn-soft px-3.5 py-1.5 text-xs font-extrabold text-[#7E65D4] flex items-center gap-1">
+                  <i class="ph-bold ph-pencil-simple"></i> Edit / Ganti Banner
                 </button>
                 ${isAdmin ? `
-                  <button onclick="window.app.deleteKelas('${k.id}')" class="w-9 h-9 rounded-full bg-[#FADAD2] text-[#EB7B6B] flex items-center justify-center">
+                  <button onclick="window.app.deleteKelas('${k.id}')" class="w-8 h-8 rounded-full bg-[#FADAD2] text-[#EB7B6B] flex items-center justify-center">
                     <i class="ph-bold ph-trash"></i>
                   </button>
                 ` : ''}
@@ -1782,7 +2157,7 @@
     const students = getAccessibleStudents();
     const isAdmin = state.currentUser?.role === 'ADMIN';
 
-    const actionsHtml = `
+    const extraBtns = `
       ${isAdmin ? `
         <button onclick="window.app.downloadTemplateSiswaExcel()" class="clay-btn-soft px-3 py-2 text-xs font-extrabold flex items-center gap-1.5">
           <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Template .xlsx
@@ -1804,7 +2179,7 @@
     `;
 
     return `
-      ${renderClassFilterSelector(actionsHtml)}
+      ${renderClassFilterSelector(extraBtns)}
 
       <div class="clay-card p-5">
         <div class="overflow-x-auto">
@@ -1812,11 +2187,11 @@
             <thead>
               <tr class="border-b-2 border-purple-200/60 text-[11px] font-extrabold text-[#6E6888] uppercase">
                 <th class="py-3 px-3">No</th>
-                <th class="py-3 px-3">NIS / NISN</th>
+                <th class="py-3 px-3">NIS / NISN (Login Ortu)</th>
                 <th class="py-3 px-3">Nama Lengkap Siswa</th>
                 <th class="py-3 px-3 text-center">L/P</th>
                 <th class="py-3 px-3">Kelas</th>
-                <th class="py-3 px-3">Nama Orang Tua / WA</th>
+                <th class="py-3 px-3">Nama Orang Tua & WA</th>
                 <th class="py-3 px-3 text-center">Aksi</th>
               </tr>
             </thead>
@@ -1826,22 +2201,16 @@
                   <td class="py-3 px-3">${idx + 1}</td>
                   <td class="py-3 px-3 font-mono font-bold text-[#7E65D4]">${s.nis} / ${s.nisn}</td>
                   <td class="py-3 px-3 font-extrabold text-[#2D264B]">${s.nama_siswa}</td>
-                  <td class="py-3 px-3 text-center">
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold ${s.jk === 'L' ? 'bg-[#E1ECF9] text-sky-800' : 'bg-[#FADAD2] text-rose-800'}">${s.jk}</span>
-                  </td>
-                  <td class="py-3 px-3">${getKelasName(s.id_kelas)}</td>
+                  <td class="py-3 px-3 text-center">${s.jk}</td>
+                  <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-[10px] font-extrabold">${getKelasName(s.id_kelas)}</span></td>
                   <td class="py-3 px-3">
-                    <div class="font-bold text-[#2D264B]">${s.nama_ortu || '-'}</div>
+                    <div>${s.nama_ortu || '-'}</div>
                     <div class="text-[10px] text-[#6E6888]">${s.no_hp_ortu || '-'}</div>
                   </td>
                   <td class="py-3 px-3 text-center">
-                    <div class="flex items-center justify-center gap-1.5">
-                      <button onclick="window.app.openSiswaModal('${s.id}')" class="w-8 h-8 rounded-full bg-[#EDE6FA] text-[#7E65D4] flex items-center justify-center">
-                        <i class="ph-bold ph-pencil-simple"></i>
-                      </button>
-                      <button onclick="window.app.deleteSiswa('${s.id}')" class="w-8 h-8 rounded-full bg-[#FADAD2] text-[#EB7B6B] flex items-center justify-center">
-                        <i class="ph-bold ph-trash"></i>
-                      </button>
+                    <div class="flex items-center justify-center gap-1">
+                      <button onclick="window.app.openSiswaModal('${s.id}')" class="w-7 h-7 rounded-full bg-[#EDE6FA] text-[#7E65D4] flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>
+                      <button onclick="window.app.deleteSiswa('${s.id}')" class="w-7 h-7 rounded-full bg-[#FADAD2] text-[#EB7B6B] flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>
                     </div>
                   </td>
                 </tr>
@@ -1854,39 +2223,40 @@
   }
 
   // ============================================================================
-  // 4. DAFTAR HADIR VIEW (INPUT HARIAN KHUSUS GURU, ADMIN HANYA REKAP)
+  // 4. DAFTAR HADIR VIEW (INPUT HARIAN KHUSUS GURU & REKAPITULASI)
   // ============================================================================
   function renderAbsensiView() {
-    const isAdmin = state.currentUser?.role === 'ADMIN';
-    if (isAdmin && state.absensiTab === 'INPUT') {
-      state.absensiTab = 'REKAP';
-    }
     const students = getAccessibleStudents();
+    const isAdmin = state.currentUser?.role === 'ADMIN';
+    const activeTab = isAdmin ? 'REKAP' : state.absensiTab;
 
-    const rightControls = `
+    const topRight = `
       <div class="flex items-center gap-1 bg-[#EDE6FA] p-1 rounded-full">
         ${!isAdmin ? `
-          <button onclick="window.app.setAbsensiTab('INPUT')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${state.absensiTab === 'INPUT' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
-            Input Harian (Khusus Guru)
+          <button onclick="window.app.setAbsensiTab('INPUT')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${activeTab === 'INPUT' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
+            Input Harian (Guru)
           </button>
         ` : ''}
-        <button onclick="window.app.setAbsensiTab('REKAP')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${state.absensiTab === 'REKAP' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
-          Rekapitulasi Kehadiran
+        <button onclick="window.app.setAbsensiTab('REKAP')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${activeTab === 'REKAP' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
+          Rekap Kehadiran
         </button>
       </div>
-      <button onclick="window.app.exportRekapAbsensiExcel()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
-        <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Ekspor Excel
+      <button onclick="window.app.exportRekapAbsensiExcel()" class="clay-btn-soft px-3 py-2 text-xs font-extrabold flex items-center gap-1">
+        <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Excel
       </button>
-      <button onclick="window.app.printRekapAbsensi()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
+      <button onclick="window.app.printRekapAbsensi()" class="clay-btn-soft px-3 py-2 text-xs font-extrabold flex items-center gap-1">
         <i class="ph-bold ph-printer text-amber-600"></i> Cetak F4
       </button>
     `;
 
-    if (state.absensiTab === 'REKAP') {
+    if (activeTab === 'REKAP') {
       return `
-        ${renderClassFilterSelector(rightControls)}
+        ${renderClassFilterSelector(topRight)}
         <div class="clay-card p-5">
-          <h3 class="font-display font-extrabold text-base text-[#2D264B] mb-4">Rekapitulasi Daftar Hadir Siswa</h3>
+          <div class="mb-3">
+            <h3 class="font-display font-extrabold text-base text-[#2D264B]">Rekapitulasi Kehadiran Peserta Didik</h3>
+            <p class="text-xs text-[#6E6888]">Perhitungan otomatis jumlah Hadir (H), Sakit (S), Izin (I), dan Alpa (A)</p>
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
@@ -1914,10 +2284,10 @@
                       <td class="py-3 px-3">${idx + 1}</td>
                       <td class="py-3 px-3 font-extrabold text-[#2D264B]">${s.nama_siswa}</td>
                       <td class="py-3 px-3">${getKelasName(s.id_kelas)}</td>
-                      <td class="py-3 px-3 text-center font-extrabold text-emerald-700">${h}</td>
-                      <td class="py-3 px-3 text-center font-extrabold text-amber-700">${sk}</td>
-                      <td class="py-3 px-3 text-center font-extrabold text-sky-700">${iz}</td>
-                      <td class="py-3 px-3 text-center font-extrabold text-rose-700">${al}</td>
+                      <td class="py-3 px-3 text-center font-bold text-emerald-700">${h}</td>
+                      <td class="py-3 px-3 text-center font-bold text-amber-700">${sk}</td>
+                      <td class="py-3 px-3 text-center font-bold text-sky-700">${iz}</td>
+                      <td class="py-3 px-3 text-center font-bold text-rose-700">${al}</td>
                       <td class="py-3 px-3 text-center font-extrabold">${pct}%</td>
                     </tr>
                   `;
@@ -1930,19 +2300,19 @@
     }
 
     return `
-      ${renderClassFilterSelector(rightControls)}
-      <div class="clay-card p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      ${renderClassFilterSelector(topRight)}
+      <div class="clay-card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <label class="text-xs font-extrabold text-[#2D264B]">Tanggal Presensi:</label>
             <input type="date" value="${state.absensiTanggal}" onchange="window.app.setAbsensiTanggal(this.value)" class="clay-input px-3.5 py-2 text-xs font-extrabold" />
           </div>
           <div class="flex items-center gap-2">
             <button onclick="window.app.markAllHadir()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold text-emerald-700">
-              <i class="ph-fill ph-checks"></i> Set Semua Hadir
+              <i class="ph-bold ph-checks"></i> Set Semua Hadir
             </button>
             <button onclick="window.app.saveBulkAbsensi()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center gap-1.5">
-              <i class="ph-bold ph-floppy-disk"></i> Simpan Presensi
+              <i class="ph-bold ph-floppy-disk"></i> Simpan Daftar Hadir
             </button>
           </div>
         </div>
@@ -1955,13 +2325,13 @@
                 <th class="py-3 px-3">Nama Siswa</th>
                 <th class="py-3 px-3">Kelas</th>
                 <th class="py-3 px-3 text-center">Status Kehadiran (H / S / I / A)</th>
-                <th class="py-3 px-3">Catatan / Keterangan</th>
+                <th class="py-3 px-3">Keterangan</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
               ${students.map((s, idx) => {
-                const rec = state.daftar_hadir.find(a => a.id_siswa === s.id && a.tanggal === state.absensiTanggal) || {};
-                const st = rec.status_hadir || 'H';
+                const rec = state.daftar_hadir.find(a => a.id_siswa === s.id && a.tanggal === state.absensiTanggal);
+                const st = rec?.status_hadir || 'H';
                 return `
                   <tr data-absen-row="${s.id}" data-absen-kelas="${s.id_kelas}">
                     <td class="py-3 px-3">${idx + 1}</td>
@@ -1978,7 +2348,7 @@
                       </div>
                     </td>
                     <td class="py-3 px-3">
-                      <input type="text" id="ket_${s.id}" value="${rec.keterangan || ''}" placeholder="Keterangan..." class="clay-input w-full px-3 py-1.5 text-xs" />
+                      <input type="text" id="ket_${s.id}" value="${rec?.keterangan || ''}" placeholder="Catatan..." class="clay-input w-full px-3 py-1.5 text-xs" />
                     </td>
                   </tr>
                 `;
@@ -2001,21 +2371,21 @@
       return true;
     });
 
-    const rightHtml = `
+    const rightBtns = `
       <select onchange="window.app.setJadwalHari(this.value)" class="clay-input px-3 py-2 text-xs font-extrabold">
         <option value="ALL" ${state.jadwalHari === 'ALL' ? 'selected' : ''}>Semua Hari</option>
         ${['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'].map(h => `<option value="${h}" ${state.jadwalHari === h ? 'selected' : ''}>${h}</option>`).join('')}
       </select>
-      <button onclick="window.app.printJadwal()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
+      <button onclick="window.app.printJadwal()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1">
         <i class="ph-bold ph-printer text-amber-600"></i> Cetak F4
       </button>
-      <button onclick="window.app.openJadwalModal()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center gap-1.5">
+      <button onclick="window.app.openJadwalModal()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center gap-1">
         <i class="ph-bold ph-plus"></i> Tambah Jadwal
       </button>
     `;
 
     return `
-      ${renderClassFilterSelector(rightHtml)}
+      ${renderClassFilterSelector(rightBtns)}
       <div class="clay-card p-5">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -2034,7 +2404,7 @@
                 <tr>
                   <td class="py-3 px-3 font-extrabold text-[#7E65D4]">${j.hari}</td>
                   <td class="py-3 px-3">${j.jam_ke}</td>
-                  <td class="py-3 px-3 font-bold">${getKelasName(j.id_kelas)}</td>
+                  <td class="py-3 px-3">${getKelasName(j.id_kelas)}</td>
                   <td class="py-3 px-3 font-extrabold text-[#2D264B]">${j.mata_pelajaran}</td>
                   <td class="py-3 px-3">${j.nama_guru}</td>
                   <td class="py-3 px-3 text-center">
@@ -2059,27 +2429,27 @@
     const selKelas = getEffectiveSelectedClassId();
     const list = state.jurnal_mengajar.filter(j => selKelas === 'ALL' || j.id_kelas === selKelas);
 
-    const rightHtml = `
-      <button onclick="window.app.printJurnalMengajar()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
+    const rightBtns = `
+      <button onclick="window.app.printJurnalMengajar()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1">
         <i class="ph-bold ph-printer text-amber-600"></i> Cetak F4
       </button>
-      <button onclick="window.app.openJurnalModal()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center gap-1.5">
-        <i class="ph-bold ph-plus"></i> Isi Jurnal Mengajar
+      <button onclick="window.app.openJurnalModal()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center gap-1">
+        <i class="ph-bold ph-plus"></i> Isi Jurnal Harian
       </button>
     `;
 
     return `
-      ${renderClassFilterSelector(rightHtml)}
+      ${renderClassFilterSelector(rightBtns)}
       <div class="clay-card p-5">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b-2 border-purple-200/60 text-[11px] font-extrabold text-[#6E6888] uppercase">
                 <th class="py-3 px-3">Tanggal & Jam</th>
-                <th class="py-3 px-3">Kelas</th>
-                <th class="py-3 px-3">Mapel & Materi Pokok</th>
-                <th class="py-3 px-3">Kegiatan Pembelajaran</th>
+                <th class="py-3 px-3">Kelas & Mapel</th>
+                <th class="py-3 px-3">Materi Pokok & Kegiatan</th>
                 <th class="py-3 px-3 text-center">Hadir / Absen</th>
+                <th class="py-3 px-3">Catatan</th>
                 <th class="py-3 px-3 text-center">Aksi</th>
               </tr>
             </thead>
@@ -2090,15 +2460,18 @@
                     <div class="font-extrabold text-[#2D264B]">${j.tanggal}</div>
                     <div class="text-[10px] text-[#6E6888]">Jam ke-${j.jam_ke}</div>
                   </td>
-                  <td class="py-3 px-3 font-bold">${getKelasName(j.id_kelas)}</td>
                   <td class="py-3 px-3">
-                    <div class="font-extrabold text-[#7E65D4]">${j.mata_pelajaran}</div>
-                    <div class="text-[#2D264B]">${j.materi}</div>
+                    <span class="px-2 py-0.5 rounded bg-[#EDE6FA] text-[#7E65D4] text-[10px] font-extrabold">${getKelasName(j.id_kelas)}</span>
+                    <div class="font-extrabold text-[#2D264B] mt-1">${j.mata_pelajaran}</div>
                   </td>
-                  <td class="py-3 px-3">${j.kegiatan}</td>
-                  <td class="py-3 px-3 text-center">
-                    <span class="text-emerald-700 font-extrabold">${j.jml_hadir}</span> / <span class="text-rose-600 font-extrabold">${j.jml_absen}</span>
+                  <td class="py-3 px-3">
+                    <div class="font-extrabold text-[#2D264B]">${j.materi}</div>
+                    <div class="text-[11px] text-[#6E6888]">${j.kegiatan}</div>
                   </td>
+                  <td class="py-3 px-3 text-center font-extrabold">
+                    <span class="text-emerald-700">${j.jml_hadir}</span> / <span class="text-rose-600">${j.jml_absen}</span>
+                  </td>
+                  <td class="py-3 px-3">${j.catatan || '-'}</td>
                   <td class="py-3 px-3 text-center">
                     <div class="flex items-center justify-center gap-1">
                       <button onclick="window.app.openJurnalModal('${j.id}')" class="w-7 h-7 rounded-full bg-[#EDE6FA] text-[#7E65D4] flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>
@@ -2115,41 +2488,44 @@
   }
 
   // ============================================================================
-  // 7. BUKU NILAI VIEW (INPUT & REKAP LEGER SEMUA MAPEL)
+  // 7. BUKU NILAI VIEW (INPUT NILAI & REKAP LEGER SEMUA MATA PELAJARAN)
   // ============================================================================
   function renderNilaiView() {
     const students = getAccessibleStudents();
-    const rightHtml = `
+    const tab = state.nilaiTab;
+
+    const topRight = `
       <div class="flex items-center gap-1 bg-[#EDE6FA] p-1 rounded-full">
-        <button onclick="window.app.setNilaiTab('INPUT')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${state.nilaiTab === 'INPUT' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
+        <button onclick="window.app.setNilaiTab('INPUT')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${tab === 'INPUT' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
           Input Nilai Mapel
         </button>
-        <button onclick="window.app.setNilaiTab('REKAP')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${state.nilaiTab === 'REKAP' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
-          Rekap / Leger Semua Mapel
+        <button onclick="window.app.setNilaiTab('REKAP')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${tab === 'REKAP' ? 'bg-white text-[#2D264B] shadow-xs' : 'text-[#6E6888]'}">
+          Rekap & Leger Semua Mapel
         </button>
       </div>
-      <button onclick="window.app.exportNilaiExcel()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
-        <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Ekspor Excel
-      </button>
-      <button onclick="window.app.printRekapNilai()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
-        <i class="ph-bold ph-printer text-amber-600"></i> Cetak F4
-      </button>
     `;
 
-    if (state.nilaiTab === 'REKAP') {
+    if (tab === 'REKAP') {
       const isAll = state.rekapNilaiFilter === 'ALL_MAPEL';
       return `
-        ${renderClassFilterSelector(rightHtml)}
-        <div class="clay-card p-5">
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-            <div>
-              <h3 class="font-display font-extrabold text-base text-[#2D264B]">Rekapitulasi Buku Nilai & Leger Kelas</h3>
-              <p class="text-xs text-[#6E6888]">Pilih Semua Mata Pelajaran (Leger) atau spesifik per mata pelajaran</p>
+        ${renderClassFilterSelector(topRight)}
+        <div class="clay-card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-extrabold text-[#2D264B]">Pilih Tampilan Rekap:</label>
+              <select onchange="window.app.setRekapNilaiFilter(this.value)" class="clay-input px-3.5 py-2 text-xs font-extrabold text-[#7E65D4]">
+                <option value="ALL_MAPEL" ${isAll ? 'selected' : ''}>🌟 Semua Mata Pelajaran (Leger Kelas)</option>
+                ${DAFTAR_MAPEL_SD.map(m => `<option value="${m}" ${state.rekapNilaiFilter === m ? 'selected' : ''}>Mapel: ${m}</option>`).join('')}
+              </select>
             </div>
-            <select onchange="window.app.setRekapNilaiFilter(this.value)" class="clay-input px-4 py-2 text-xs font-extrabold text-[#2D264B]">
-              <option value="ALL_MAPEL" ${isAll ? 'selected' : ''}>🌟 Semua Mata Pelajaran (Leger Kelas)</option>
-              ${DAFTAR_MAPEL_SD.map(m => `<option value="${m}" ${state.rekapNilaiFilter === m ? 'selected' : ''}>${m}</option>`).join('')}
-            </select>
+            <div class="flex items-center gap-2">
+              <button onclick="window.app.exportNilaiExcel()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
+                <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Ekspor Excel (.xlsx)
+              </button>
+              <button onclick="window.app.printRekapNilai()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
+                <i class="ph-bold ph-printer text-amber-600"></i> Cetak Leger F4
+              </button>
+            </div>
           </div>
 
           <div class="overflow-x-auto">
@@ -2161,20 +2537,16 @@
                     <th class="py-3 px-2">Nama Siswa</th>
                     <th class="py-3 px-2">Kelas</th>
                     ${DAFTAR_MAPEL_SD.map(m => `<th class="py-3 px-2 text-center">${m.split(' ')[0]}</th>`).join('')}
-                    <th class="py-3 px-2 text-center bg-[#EDE6FA]/60">Rata-Rata</th>
-                    <th class="py-3 px-2 text-center bg-[#FBF0D9]/60">Predikat</th>
+                    <th class="py-3 px-2 text-center bg-[#EDE6FA]/50">Rata-Rata</th>
+                    <th class="py-3 px-2 text-center bg-[#EDE6FA]/50">Predikat</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
                   ${students.map((s, idx) => {
                     let sum = 0, cnt = 0;
                     const cols = DAFTAR_MAPEL_SD.map(m => {
-                      const rec = state.buku_nilai.find(n => n.id_siswa === s.id && n.mata_pelajaran === m);
-                      if (rec && rec.nilai_akhir !== undefined) {
-                        sum += Number(rec.nilai_akhir);
-                        cnt++;
-                        return `<td class="py-2.5 px-2 text-center font-bold">${rec.nilai_akhir}</td>`;
-                      }
+                      const r = state.buku_nilai.find(n => n.id_siswa === s.id && n.mata_pelajaran === m);
+                      if (r && r.nilai_akhir !== undefined) { sum += Number(r.nilai_akhir); cnt++; return `<td class="py-2.5 px-2 text-center font-bold">${r.nilai_akhir}</td>`; }
                       return `<td class="py-2.5 px-2 text-center text-[#6E6888]">-</td>`;
                     }).join('');
                     const avg = cnt > 0 ? (sum / cnt).toFixed(1) : '-';
@@ -2185,8 +2557,8 @@
                         <td class="py-2.5 px-2 font-extrabold text-[#2D264B]">${s.nama_siswa}</td>
                         <td class="py-2.5 px-2">${getKelasName(s.id_kelas)}</td>
                         ${cols}
-                        <td class="py-2.5 px-2 text-center font-black text-[#7E65D4] bg-[#EDE6FA]/30">${avg}</td>
-                        <td class="py-2.5 px-2 text-center font-black bg-[#FBF0D9]/30">${pred}</td>
+                        <td class="py-2.5 px-2 text-center font-black text-[#7E65D4]">${avg}</td>
+                        <td class="py-2.5 px-2 text-center font-extrabold">${pred}</td>
                       </tr>
                     `;
                   }).join('')}
@@ -2209,18 +2581,18 @@
                 </thead>
                 <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
                   ${students.map((s, idx) => {
-                    const rec = state.buku_nilai.find(n => n.id_siswa === s.id && n.mata_pelajaran === state.rekapNilaiFilter) || {};
+                    const r = state.buku_nilai.find(n => n.id_siswa === s.id && n.mata_pelajaran === state.rekapNilaiFilter) || {};
                     return `
                       <tr>
                         <td class="py-3 px-3">${idx + 1}</td>
                         <td class="py-3 px-3 font-extrabold text-[#2D264B]">${s.nama_siswa}</td>
                         <td class="py-3 px-3">${getKelasName(s.id_kelas)}</td>
-                        <td class="py-3 px-3 text-center">${rec.nilai_formatif ?? '-'}</td>
-                        <td class="py-3 px-3 text-center">${rec.nilai_sumatif ?? '-'}</td>
-                        <td class="py-3 px-3 text-center">${rec.nilai_pts ?? '-'}</td>
-                        <td class="py-3 px-3 text-center">${rec.nilai_pas ?? '-'}</td>
-                        <td class="py-3 px-3 text-center font-extrabold text-[#7E65D4]">${rec.nilai_akhir ?? '-'}</td>
-                        <td class="py-3 px-3 text-center font-extrabold">${rec.predikat ?? '-'}</td>
+                        <td class="py-3 px-3 text-center">${r.nilai_formatif ?? '-'}</td>
+                        <td class="py-3 px-3 text-center">${r.nilai_sumatif ?? '-'}</td>
+                        <td class="py-3 px-3 text-center">${r.nilai_pts ?? '-'}</td>
+                        <td class="py-3 px-3 text-center">${r.nilai_pas ?? '-'}</td>
+                        <td class="py-3 px-3 text-center font-extrabold text-[#7E65D4]">${r.nilai_akhir ?? '-'}</td>
+                        <td class="py-3 px-3 text-center font-extrabold">${r.predikat ?? '-'}</td>
                       </tr>
                     `;
                   }).join('')}
@@ -2233,12 +2605,12 @@
     }
 
     return `
-      ${renderClassFilterSelector(rightHtml)}
-      <div class="clay-card p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      ${renderClassFilterSelector(topRight)}
+      <div class="clay-card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-extrabold text-[#2D264B]">Mata Pelajaran:</span>
-            <select onchange="window.app.setNilaiMapel(this.value)" class="clay-input px-3.5 py-2 text-xs font-extrabold">
+            <label class="text-xs font-extrabold text-[#2D264B]">Mata Pelajaran:</label>
+            <select onchange="window.app.setNilaiMapel(this.value)" class="clay-input px-3.5 py-2 text-xs font-extrabold text-[#7E65D4]">
               ${DAFTAR_MAPEL_SD.map(m => `<option value="${m}" ${state.nilaiMapel === m ? 'selected' : ''}>${m}</option>`).join('')}
             </select>
           </div>
@@ -2252,7 +2624,7 @@
             <thead>
               <tr class="border-b-2 border-purple-200/60 text-[11px] font-extrabold text-[#6E6888] uppercase">
                 <th class="py-3 px-3">No</th>
-                <th class="py-3 px-3">Nama Siswa</th>
+                <th class="py-3 px-3">Nama Siswa & Kelas</th>
                 <th class="py-3 px-3 text-center">Formatif</th>
                 <th class="py-3 px-3 text-center">Sumatif</th>
                 <th class="py-3 px-3 text-center">PTS / STS</th>
@@ -2267,13 +2639,16 @@
                 return `
                   <tr data-nilai-row="${s.id}" data-nilai-kelas="${s.id_kelas}">
                     <td class="py-3 px-3">${idx + 1}</td>
-                    <td class="py-3 px-3 font-extrabold text-[#2D264B]">${s.nama_siswa}</td>
-                    <td class="py-3 px-3 text-center"><input type="number" id="nf_${s.id}" value="${rec.nilai_formatif ?? 80}" class="clay-input w-16 text-center py-1.5 font-extrabold" /></td>
-                    <td class="py-3 px-3 text-center"><input type="number" id="ns_${s.id}" value="${rec.nilai_sumatif ?? 80}" class="clay-input w-16 text-center py-1.5 font-extrabold" /></td>
-                    <td class="py-3 px-3 text-center"><input type="number" id="npts_${s.id}" value="${rec.nilai_pts ?? 80}" class="clay-input w-16 text-center py-1.5 font-extrabold" /></td>
-                    <td class="py-3 px-3 text-center"><input type="number" id="npas_${s.id}" value="${rec.nilai_pas ?? 80}" class="clay-input w-16 text-center py-1.5 font-extrabold" /></td>
-                    <td class="py-3 px-3 text-center font-extrabold text-[#7E65D4]">${rec.nilai_akhir ?? '-'}</td>
-                    <td class="py-3 px-3 text-center font-extrabold">${rec.predikat ?? '-'}</td>
+                    <td class="py-3 px-3">
+                      <div class="font-extrabold text-[#2D264B]">${s.nama_siswa}</div>
+                      <div class="text-[10px] text-[#6E6888]">${getKelasName(s.id_kelas)}</div>
+                    </td>
+                    <td class="py-3 px-3 text-center"><input type="number" id="nf_${s.id}" value="${rec.nilai_formatif ?? 80}" class="clay-input w-16 text-center py-1 font-extrabold" /></td>
+                    <td class="py-3 px-3 text-center"><input type="number" id="ns_${s.id}" value="${rec.nilai_sumatif ?? 80}" class="clay-input w-16 text-center py-1 font-extrabold" /></td>
+                    <td class="py-3 px-3 text-center"><input type="number" id="npts_${s.id}" value="${rec.nilai_pts ?? 80}" class="clay-input w-16 text-center py-1 font-extrabold" /></td>
+                    <td class="py-3 px-3 text-center"><input type="number" id="npas_${s.id}" value="${rec.nilai_pas ?? 80}" class="clay-input w-16 text-center py-1 font-extrabold" /></td>
+                    <td class="py-3 px-3 text-center font-extrabold text-[#7E65D4]">${rec.nilai_akhir ?? 80}</td>
+                    <td class="py-3 px-3 text-center font-extrabold">${rec.predikat ?? 'B'}</td>
                   </tr>
                 `;
               }).join('')}
@@ -2285,24 +2660,176 @@
   }
 
   // ============================================================================
-  // 8. TARGET LITERASI & NUMERASI PER TRIWULAN (GURU KELOLA, ADMIN HANYA REKAPAN)
+  // 7B. E-RAPOR KURIKULUM MERDEKA VIEW
+  // ============================================================================
+  function renderERaporView() {
+    const students = getAccessibleStudents();
+    const isAdmin = state.currentUser?.role === 'ADMIN';
+    const activeSiswa = students.find(s => s.id === state.selectedRaporSiswaId) || students[0];
+
+    const extraBtns = `
+      <button onclick="window.app.exportLegerERaporExcel()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
+        <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Ekspor Leger Rapor (.xlsx)
+      </button>
+    `;
+
+    if (!activeSiswa) {
+      return `${renderClassFilterSelector(extraBtns)}<div class="clay-card p-8 text-center text-xs text-[#6E6888]">Belum ada siswa pada kelas ini.</div>`;
+    }
+
+    const kls = state.data_kelas.find(k => k.id === activeSiswa.id_kelas) || {};
+    const fase = getFaseByTingkat(kls.tingkat || 5);
+    const raporRec = state.erapor_data.find(r => r.id_siswa === activeSiswa.id && r.tahun_pelajaran === state.activeTapel) || {};
+    let customCapaian = {};
+    try {
+      customCapaian = raporRec.capaian_custom_json ? JSON.parse(raporRec.capaian_custom_json) : {};
+    } catch (e) {
+      customCapaian = {};
+    }
+
+    return `
+      ${renderClassFilterSelector(extraBtns)}
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Daftar Siswa Kiri -->
+        <div class="lg:col-span-4 clay-card p-4 space-y-2 max-h-[75vh] overflow-y-auto">
+          <div class="text-xs font-extrabold text-[#2D264B] px-2 pb-2 border-b border-purple-200/50">
+            Pilih Peserta Didik (${students.length} Murid)
+          </div>
+          ${students.map(s => {
+            const isSel = s.id === activeSiswa.id;
+            return `
+              <div onclick="window.app.selectRaporSiswa('${s.id}')" class="p-3 rounded-2xl cursor-pointer transition flex items-center justify-between ${isSel ? 'bg-[#7E65D4] text-white shadow-md' : 'bg-white/80 hover:bg-white text-[#2D264B]'}">
+                <div>
+                  <div class="text-xs font-extrabold">${s.nama_siswa}</div>
+                  <div class="text-[10px] ${isSel ? 'text-white/80' : 'text-[#6E6888]'}">NIS: ${s.nis} • ${getKelasName(s.id_kelas)}</div>
+                </div>
+                <i class="ph-bold ph-caret-right"></i>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Detail E-Rapor Kanan -->
+        <div class="lg:col-span-8 clay-card p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-purple-200/60">
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-[10px] font-extrabold">${fase} • Kurikulum Merdeka</span>
+              <h3 class="font-display font-extrabold text-lg text-[#2D264B] mt-1">${activeSiswa.nama_siswa}</h3>
+              <p class="text-xs text-[#6E6888]">NIS: ${activeSiswa.nis} / NISN: ${activeSiswa.nisn} • ${kls.nama_kelas || ''}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="window.app.printSingleERapor('${activeSiswa.id}')" class="clay-btn-soft px-4 py-2 text-xs font-extrabold flex items-center gap-1.5">
+                <i class="ph-bold ph-printer text-amber-600"></i> Cetak Rapor (F4)
+              </button>
+              ${!isAdmin ? `
+                <button onclick="window.app.saveERaporSiswa('${activeSiswa.id}')" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center gap-1.5">
+                  <i class="ph-bold ph-floppy-disk"></i> Simpan E-Rapor
+                </button>
+              ` : ''}
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="text-xs font-extrabold text-[#2D264B]">A. Capaian Kompetensi Mata Pelajaran (Intrakurikuler)</div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b-2 border-purple-200/60 text-[10px] font-extrabold text-[#6E6888] uppercase">
+                    <th class="py-2 px-2 w-44">Mata Pelajaran</th>
+                    <th class="py-2 px-2 w-20 text-center">Nilai Akhir</th>
+                    <th class="py-2 px-2">Deskripsi Capaian Kompetensi (Otomatis & Dapat Diedit)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
+                  ${DAFTAR_MAPEL_SD.map(m => {
+                    const rec = state.buku_nilai.find(n => n.id_siswa === activeSiswa.id && n.mata_pelajaran === m);
+                    const na = rec?.nilai_akhir ?? '-';
+                    const autoD = generateAutoCapaianDeskripsi(activeSiswa.nama_siswa, m, na);
+                    const valDesc = customCapaian[m] || `${autoD.tertinggi} ${autoD.peningkatan}`;
+                    return `
+                      <tr>
+                        <td class="py-2.5 px-2 font-extrabold text-[#2D264B]">${m}</td>
+                        <td class="py-2.5 px-2 text-center font-black text-[#7E65D4]">${na}</td>
+                        <td class="py-2.5 px-2">
+                          <textarea data-mapel-name="${m}" rows="2" ${isAdmin ? 'disabled' : ''} class="clay-input w-full px-3 py-1.5 text-xs">${valDesc}</textarea>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold">
+            <div>
+              <label class="block mb-1 text-[#2D264B]">B. Kokurikuler (Projek Penguatan Profil Pelajar Pancasila / P5)</label>
+              <textarea id="rapor-p5" rows="3" ${isAdmin ? 'disabled' : ''} class="clay-input w-full px-3 py-2">${raporRec.kokurikuler_p5 || `Ananda ${activeSiswa.nama_siswa} menunjukkan perkembangan Berkembang Sesuai Harapan (BSH) dalam projek P5.`}</textarea>
+            </div>
+            <div>
+              <label class="block mb-1 text-[#2D264B]">C. Catatan Wali Kelas & Keputusan</label>
+              <textarea id="rapor-catatan" rows="2" ${isAdmin ? 'disabled' : ''} class="clay-input w-full px-3 py-2 mb-2">${raporRec.catatan_wali || 'Pertahankan semangat belajar dan prestasimu di semester berikutnya.'}</textarea>
+              <input type="text" id="rapor-kenaikan" ${isAdmin ? 'disabled' : ''} value="${raporRec.status_kenaikan || 'Naik Kelas / Tuntas'}" class="clay-input w-full px-3 py-1.5" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold">
+            <div class="p-3.5 rounded-2xl bg-white/70 space-y-2">
+              <div class="font-extrabold text-[#7E65D4]">Ekstrakurikuler 1</div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="rapor-eks1-nama" ${isAdmin ? 'disabled' : ''} value="${raporRec.ekskul_1_nama || 'Pramuka'}" placeholder="Nama Ekskul" class="clay-input px-3 py-1.5" />
+                <select id="rapor-eks1-pred" ${isAdmin ? 'disabled' : ''} class="clay-input px-3 py-1.5">
+                  ${['Sangat Baik', 'Baik', 'Cukup'].map(p => `<option value="${p}" ${raporRec.ekskul_1_predikat === p ? 'selected' : ''}>${p}</option>`).join('')}
+                </select>
+              </div>
+              <input type="text" id="rapor-eks1-ket" ${isAdmin ? 'disabled' : ''} value="${raporRec.ekskul_1_ket || 'Aktif mengikuti kegiatan kepramukaan mingguan.'}" class="clay-input w-full px-3 py-1.5" />
+            </div>
+            <div class="p-3.5 rounded-2xl bg-white/70 space-y-2">
+              <div class="font-extrabold text-[#7E65D4]">Ekstrakurikuler 2</div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="rapor-eks2-nama" ${isAdmin ? 'disabled' : ''} value="${raporRec.ekskul_2_nama || 'Seni / Olahraga'}" placeholder="Nama Ekskul" class="clay-input px-3 py-1.5" />
+                <select id="rapor-eks2-pred" ${isAdmin ? 'disabled' : ''} class="clay-input px-3 py-1.5">
+                  ${['Sangat Baik', 'Baik', 'Cukup'].map(p => `<option value="${p}" ${raporRec.ekskul_2_predikat === p ? 'selected' : ''}>${p}</option>`).join('')}
+                </select>
+              </div>
+              <input type="text" id="rapor-eks2-ket" ${isAdmin ? 'disabled' : ''} value="${raporRec.ekskul_2_ket || 'Mengikuti latihan dengan antusias.'}" class="clay-input w-full px-3 py-1.5" />
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================================
+  // 8. TARGET LITERASI, NUMERASI & KARAKTER MURID PER TRIWULAN
+  //    (BERDASARKAN PANDUAN LAPORAN KINERJA SATUAN PENDIDIKAN KAB. DONGGALA 2026)
   // ============================================================================
   function renderLiterasiNumerasiView() {
     const students = getAccessibleStudents();
     const triwulan = state.litnumTriwulan;
     const isAdmin = state.currentUser?.role === 'ADMIN';
+    const selKelasId = getEffectiveSelectedClassId();
 
-    // Ambil deskripsi target dari baris pertama triwulan ini atau default
-    const sampleRec = state.target_litnum.find(r => r.triwulan === triwulan);
-    const defaultLitDesc = sampleRec?.target_literasi_desc || 'Mampu membaca lancar, memahami isi teks bacaan, dan menceritakan kembali informasi utama';
-    const defaultNumDesc = sampleRec?.target_numerasi_desc || 'Mampu menguasai operasi hitung dasar dan menyelesaikan soal cerita matematika kontekstual';
+    // Tentukan tingkat kelas aktif (Kelas 1 s.d. 6) untuk mengambil matriks resmi dari Panduan
+    const activeKlsObj = selKelasId !== 'ALL'
+      ? state.data_kelas.find(k => k.id === selKelasId)
+      : (state.data_kelas[0] || { tingkat: 5 });
+    const tingkatAktif = state.litnumPreviewTingkat || activeKlsObj?.tingkat || 5;
+    const panduan = getPanduanLitnumByTingkatAndTriwulan(tingkatAktif, triwulan);
 
     let litAchieved = 0;
     let numAchieved = 0;
+    let karTeraturOk = 0;
+    let karTekunOk = 0;
+    let karMandiriOk = 0;
+
     students.forEach(s => {
       const rec = state.target_litnum.find(r => r.id_siswa === s.id && r.triwulan === triwulan);
       if (rec?.status_literasi === 'Tercapai') litAchieved++;
       if (rec?.status_numerasi === 'Tercapai') numAchieved++;
+      if ((rec?.karakter_teratur || 'Memenuhi') === 'Memenuhi') karTeraturOk++;
+      if ((rec?.karakter_tekun || 'Memenuhi') === 'Memenuhi') karTekunOk++;
+      if ((rec?.karakter_mandiri || 'Memenuhi') === 'Memenuhi') karMandiriOk++;
     });
 
     const totalSiswa = students.length;
@@ -2310,6 +2837,9 @@
     const numBelum = Math.max(0, totalSiswa - numAchieved);
     const pctLit = totalSiswa ? Math.round((litAchieved / totalSiswa) * 100) : 0;
     const pctNum = totalSiswa ? Math.round((numAchieved / totalSiswa) * 100) : 0;
+    const pctKar1 = totalSiswa ? Math.round((karTeraturOk / totalSiswa) * 100) : 0;
+    const pctKar2 = totalSiswa ? Math.round((karTekunOk / totalSiswa) * 100) : 0;
+    const pctKar3 = totalSiswa ? Math.round((karMandiriOk / totalSiswa) * 100) : 0;
 
     const topControls = `
       <div class="flex items-center gap-1 bg-[#EDE6FA] p-1 rounded-full">
@@ -2319,6 +2849,11 @@
           </button>
         `).join('')}
       </div>
+      ${!isClassLocked() ? `
+        <select onchange="window.app.setLitnumTingkatRef(this.value)" class="clay-input px-3 py-1.5 text-xs font-extrabold text-[#7E65D4]" title="Pilih Acuan Tingkat Kelas Panduan">
+          ${[1, 2, 3, 4, 5, 6].map(t => `<option value="${t}" ${Number(tingkatAktif) === t ? 'selected' : ''}>Acuan Panduan: Kelas ${t}</option>`).join('')}
+        </select>
+      ` : ''}
       <button onclick="window.app.exportLitnumExcel()" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold flex items-center gap-1.5">
         <i class="ph-fill ph-file-xls text-emerald-600 text-base"></i> Ekspor Excel
       </button>
@@ -2336,45 +2871,58 @@
       `}
     `;
 
-    // Rekap Per Kelas khusus tampilan Admin
+    // Rekap Per Kelas khusus tampilan Admin sesuai format Lampiran 5 (F, G, H)
     const rekapPerKelasHtml = isAdmin ? `
       <div class="clay-card p-5">
-        <div class="mb-3">
-          <h3 class="font-display font-extrabold text-base text-[#2D264B]">Rekapitulasi Ketercapaian Target Literasi & Numerasi Per Kelas (${triwulan})</h3>
-          <p class="text-xs text-[#6E6888]">Ringkasan jumlah siswa mencapai target vs belum mencapai target di setiap rombongan belajar (Input dilakukan oleh masing-masing Guru)</p>
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="font-display font-extrabold text-base text-[#2D264B]">Rekapitulasi Capaian Target Rombel — ${triwulan} (Sesuai Lampiran 5 Panduan)</h3>
+            <p class="text-xs text-[#6E6888]">Progres capaian target tiap rombel: Jumlah murid & jumlah murid mencapai target (%)</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-[11px] font-extrabold">${PERIODE_TRIWULAN_INFO[triwulan]}</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b-2 border-purple-200/60 text-[11px] font-extrabold text-[#6E6888] uppercase">
-                <th class="py-2.5 px-3">Kelas & Wali Kelas</th>
-                <th class="py-2.5 px-3 text-center">Jml Siswa</th>
-                <th class="py-2.5 px-3 text-center bg-[#FBF0D9]/50">Literasi Tercapai</th>
-                <th class="py-2.5 px-3 text-center bg-[#FBF0D9]/50">Literasi Belum</th>
-                <th class="py-2.5 px-3 text-center bg-[#E1ECF9]/50">Numerasi Tercapai</th>
-                <th class="py-2.5 px-3 text-center bg-[#E1ECF9]/50">Numerasi Belum</th>
+                <th class="py-2.5 px-3">Rombel & Wali Kelas</th>
+                <th class="py-2.5 px-3">Indikator Resmi Kelas (${triwulan})</th>
+                <th class="py-2.5 px-3 text-center">Jumlah Murid</th>
+                <th class="py-2.5 px-3 text-center bg-[#FBF0D9]/50">Literasi Tuntas (%)</th>
+                <th class="py-2.5 px-3 text-center bg-[#E1ECF9]/50">Numerasi Tuntas (%)</th>
+                <th class="py-2.5 px-3 text-center bg-[#EDE6FA]/50">Karakter ≥85%</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
               ${state.data_kelas.map(k => {
                 const sisKls = state.data_siswa.filter(s => s.id_kelas === k.id);
-                let lOk = 0, nOk = 0;
+                const pKls = getPanduanLitnumByTingkatAndTriwulan(k.tingkat || 5, triwulan);
+                let lOk = 0, nOk = 0, kOk = 0;
                 sisKls.forEach(s => {
                   const r = state.target_litnum.find(x => x.id_siswa === s.id && x.triwulan === triwulan);
                   if (r?.status_literasi === 'Tercapai') lOk++;
                   if (r?.status_numerasi === 'Tercapai') nOk++;
+                  if ((r?.karakter_teratur || 'Memenuhi') === 'Memenuhi' &&
+                      (r?.karakter_tekun || 'Memenuhi') === 'Memenuhi' &&
+                      (r?.karakter_mandiri || 'Memenuhi') === 'Memenuhi') kOk++;
                 });
+                const pL = sisKls.length ? Math.round((lOk / sisKls.length) * 100) : 0;
+                const pN = sisKls.length ? Math.round((nOk / sisKls.length) * 100) : 0;
+                const pK = sisKls.length ? Math.round((kOk / sisKls.length) * 100) : 0;
                 return `
                   <tr class="hover:bg-white/70">
                     <td class="py-2.5 px-3">
-                      <div class="font-extrabold text-[#2D264B]">${k.nama_kelas}</div>
+                      <div class="font-extrabold text-[#2D264B]">${k.nama_kelas} (Kelas ${k.tingkat})</div>
                       <div class="text-[10px] text-[#6E6888]">Wali: ${k.wali_kelas_nama}</div>
                     </td>
-                    <td class="py-2.5 px-3 text-center font-extrabold">${sisKls.length}</td>
-                    <td class="py-2.5 px-3 text-center font-extrabold text-emerald-700">${lOk} Siswa</td>
-                    <td class="py-2.5 px-3 text-center font-extrabold text-rose-600">${Math.max(0, sisKls.length - lOk)} Siswa</td>
-                    <td class="py-2.5 px-3 text-center font-extrabold text-emerald-700">${nOk} Siswa</td>
-                    <td class="py-2.5 px-3 text-center font-extrabold text-rose-600">${Math.max(0, sisKls.length - nOk)} Siswa</td>
+                    <td class="py-2.5 px-3 text-[11px]">
+                      <div><b class="text-amber-700">Lit:</b> ${pKls.lit_indikator}</div>
+                      <div><b class="text-sky-700">Num:</b> ${pKls.num_indikator}</div>
+                    </td>
+                    <td class="py-2.5 px-3 text-center font-extrabold">${sisKls.length} orang</td>
+                    <td class="py-2.5 px-3 text-center font-extrabold text-emerald-700">${lOk} orang (${pL}%)</td>
+                    <td class="py-2.5 px-3 text-center font-extrabold text-emerald-700">${nOk} orang (${pN}%)</td>
+                    <td class="py-2.5 px-3 text-center font-extrabold ${pK >= 85 ? 'text-emerald-700' : 'text-amber-700'}">${kOk} orang (${pK}%)</td>
                   </tr>
                 `;
               }).join('')}
@@ -2387,9 +2935,29 @@
     return `
       ${renderClassFilterSelector(topControls)}
 
-      <!-- Statistik Ketercapaian Target Literasi & Numerasi Triwulan -->
+      <!-- Banner Info Acuan Resmi Panduan Kabupaten Donggala -->
+      <div class="clay-card p-4 bg-gradient-to-r from-[#EDE6FA] via-[#FAF5F0] to-[#FBF0D9] flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#7E65D4] text-white flex items-center justify-center shrink-0 shadow">
+            <i class="ph-fill ph-book-bookmark text-xl"></i>
+          </div>
+          <div>
+            <div class="text-xs font-extrabold text-[#2D264B]">
+              Acuan Resmi: Panduan Laporan Kinerja Satuan Pendidikan & Capaian Pembelajaran Berbasis Dashboard (${panduan.nama_tingkat})
+            </div>
+            <div class="text-[11px] font-semibold text-[#6E6888]">
+              ${PERIODE_TRIWULAN_INFO[triwulan]} • Dinas Pendidikan, Pemuda, dan Olahraga Kabupaten Donggala
+            </div>
+          </div>
+        </div>
+        <button onclick="window.app.openModalMatriksPanduanLengkap(${tingkatAktif})" class="clay-btn-soft px-3.5 py-2 text-xs font-extrabold text-[#7E65D4] flex items-center gap-1.5">
+          <i class="ph-bold ph-table"></i> Lihat Matriks 1 Tahun & Contoh Soal (${panduan.nama_tingkat})
+        </button>
+      </div>
+
+      <!-- Statistik Ketercapaian Target Literasi & Numerasi Triwulan (Lampiran 2 & Lampiran 3) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <!-- Kartu Rekap Target Literasi -->
+        <!-- Kartu Rekap Target Literasi (Lampiran 2) -->
         <div class="clay-stat-butter p-5 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -2397,41 +2965,43 @@
                 <i class="ph-fill ph-book-open-text text-xl"></i>
               </div>
               <div>
-                <h4 class="font-display font-extrabold text-base text-[#2D264B]">Target Literasi — ${triwulan}</h4>
-                <p class="text-[11px] font-bold text-[#6E6888]">Rekap Siswa Mencapai vs Belum Mencapai Target</p>
+                <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-900 text-[10px] font-extrabold">Lampiran 2 • ${panduan.nama_tingkat}</span>
+                <h4 class="font-display font-extrabold text-base text-[#2D264B] mt-0.5">Target Kemampuan Literasi — ${triwulan}</h4>
               </div>
             </div>
-            <span class="font-display font-black text-2xl text-[#2D264B]">${pctLit}%</span>
+            <div class="text-right">
+              <span class="font-display font-black text-2xl text-[#2D264B]">${pctLit}%</span>
+              <div class="text-[10px] font-bold text-[#6E6888]">${litAchieved}/${totalSiswa} Tuntas</div>
+            </div>
           </div>
 
-          <div>
-            <label class="block text-[10px] font-extrabold text-[#6E6888] uppercase mb-1">Indikator / Target Literasi Guru pada ${triwulan}:</label>
-            ${isAdmin ? `
-              <div class="p-2.5 rounded-xl bg-white/80 text-xs font-bold text-[#2D264B]">${defaultLitDesc}</div>
-            ` : `
-              <input type="text" id="global-lit-desc" value="${defaultLitDesc}" class="clay-input w-full px-3.5 py-2 text-xs font-bold text-[#2D264B]" />
-            `}
+          <div class="p-3 rounded-2xl bg-white/85 space-y-1.5 border border-amber-200/70">
+            <div class="text-[10px] font-extrabold text-amber-800 uppercase">Indikator Resmi ${triwulan} (${panduan.nama_tingkat}):</div>
+            <input type="text" id="global-lit-desc" ${isAdmin ? 'disabled' : ''} value="${panduan.lit_indikator}" class="clay-input w-full px-3 py-1.5 text-xs font-extrabold text-[#2D264B]" />
+            <div class="text-[11px] text-[#6E6888] pt-1">
+              <b class="text-[#2D264B]">Contoh Soal / Instrumen Panduan:</b> <i>${panduan.lit_contoh}</i>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3 pt-1">
-            <div class="bg-white/80 rounded-2xl p-3 flex items-center justify-between">
+            <div class="bg-white/85 rounded-2xl p-3 flex items-center justify-between">
               <div>
-                <div class="text-[10px] font-bold text-emerald-700">Mencapai Target</div>
-                <div class="font-display font-black text-xl text-emerald-700">${litAchieved} <span class="text-xs font-bold">Siswa</span></div>
+                <div class="text-[10px] font-bold text-emerald-700">Murid Mencapai Target</div>
+                <div class="font-display font-black text-lg text-emerald-700">${litAchieved} orang (${pctLit}%)</div>
               </div>
               <i class="ph-fill ph-check-circle text-2xl text-emerald-500"></i>
             </div>
-            <div class="bg-white/80 rounded-2xl p-3 flex items-center justify-between">
+            <div class="bg-white/85 rounded-2xl p-3 flex items-center justify-between">
               <div>
-                <div class="text-[10px] font-bold text-rose-700">Belum Mencapai</div>
-                <div class="font-display font-black text-xl text-rose-600">${litBelum} <span class="text-xs font-bold">Siswa</span></div>
+                <div class="text-[10px] font-bold text-rose-700">Belum Mencapai Target</div>
+                <div class="font-display font-black text-lg text-rose-600">${litBelum} orang (${100 - pctLit}%)</div>
               </div>
               <i class="ph-fill ph-warning-circle text-2xl text-rose-500"></i>
             </div>
           </div>
         </div>
 
-        <!-- Kartu Rekap Target Numerasi -->
+        <!-- Kartu Rekap Target Numerasi (Lampiran 3) -->
         <div class="clay-stat-blue p-5 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -2439,36 +3009,80 @@
                 <i class="ph-fill ph-calculator text-xl"></i>
               </div>
               <div>
-                <h4 class="font-display font-extrabold text-base text-[#2D264B]">Target Numerasi — ${triwulan}</h4>
-                <p class="text-[11px] font-bold text-[#6E6888]">Rekap Siswa Mencapai vs Belum Mencapai Target</p>
+                <span class="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-900 text-[10px] font-extrabold">Lampiran 3 • ${panduan.nama_tingkat}</span>
+                <h4 class="font-display font-extrabold text-base text-[#2D264B] mt-0.5">Target Kemampuan Numerasi — ${triwulan}</h4>
               </div>
             </div>
-            <span class="font-display font-black text-2xl text-[#2D264B]">${pctNum}%</span>
+            <div class="text-right">
+              <span class="font-display font-black text-2xl text-[#2D264B]">${pctNum}%</span>
+              <div class="text-[10px] font-bold text-[#6E6888]">${numAchieved}/${totalSiswa} Tuntas</div>
+            </div>
           </div>
 
-          <div>
-            <label class="block text-[10px] font-extrabold text-[#6E6888] uppercase mb-1">Indikator / Target Numerasi Guru pada ${triwulan}:</label>
-            ${isAdmin ? `
-              <div class="p-2.5 rounded-xl bg-white/80 text-xs font-bold text-[#2D264B]">${defaultNumDesc}</div>
-            ` : `
-              <input type="text" id="global-num-desc" value="${defaultNumDesc}" class="clay-input w-full px-3.5 py-2 text-xs font-bold text-[#2D264B]" />
-            `}
+          <div class="p-3 rounded-2xl bg-white/85 space-y-1.5 border border-sky-200/70">
+            <div class="text-[10px] font-extrabold text-sky-800 uppercase">Indikator Resmi ${triwulan} (${panduan.nama_tingkat}):</div>
+            <input type="text" id="global-num-desc" ${isAdmin ? 'disabled' : ''} value="${panduan.num_indikator}" class="clay-input w-full px-3 py-1.5 text-xs font-extrabold text-[#2D264B]" />
+            <div class="text-[11px] text-[#6E6888] pt-1">
+              <b class="text-[#2D264B]">Contoh Soal / Instrumen Panduan:</b> <i>${panduan.num_contoh}</i>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3 pt-1">
-            <div class="bg-white/80 rounded-2xl p-3 flex items-center justify-between">
+            <div class="bg-white/85 rounded-2xl p-3 flex items-center justify-between">
               <div>
-                <div class="text-[10px] font-bold text-emerald-700">Mencapai Target</div>
-                <div class="font-display font-black text-xl text-emerald-700">${numAchieved} <span class="text-xs font-bold">Siswa</span></div>
+                <div class="text-[10px] font-bold text-emerald-700">Murid Mencapai Target</div>
+                <div class="font-display font-black text-lg text-emerald-700">${numAchieved} orang (${pctNum}%)</div>
               </div>
               <i class="ph-fill ph-check-circle text-2xl text-emerald-500"></i>
             </div>
-            <div class="bg-white/80 rounded-2xl p-3 flex items-center justify-between">
+            <div class="bg-white/85 rounded-2xl p-3 flex items-center justify-between">
               <div>
-                <div class="text-[10px] font-bold text-rose-700">Belum Mencapai</div>
-                <div class="font-display font-black text-xl text-rose-600">${numBelum} <span class="text-xs font-bold">Siswa</span></div>
+                <div class="text-[10px] font-bold text-rose-700">Belum Mencapai Target</div>
+                <div class="font-display font-black text-lg text-rose-600">${numBelum} orang (${100 - pctNum}%)</div>
               </div>
               <i class="ph-fill ph-warning-circle text-2xl text-rose-500"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kartu Target Karakter Murid (Lampiran 4: Disiplin, Tekun, dan Tanggung Jawab dalam Belajar - Target >= 85%) -->
+      <div class="clay-stat-lavender p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 clay-icon-box bg-[#8C72E2] text-white flex items-center justify-center">
+              <i class="ph-fill ph-heart-straight text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-display font-extrabold text-sm sm:text-base text-[#2D264B]">Lampiran 4: Capaian Target Karakter Murid (Disiplin, Tekun, & Tanggung Jawab dalam Belajar)</h4>
+              <p class="text-[11px] font-semibold text-[#6E6888]">Standar Kinerja Satuan Pendidikan: Target Minimal ≥ 85% murid memenuhi indikator pada tiap rombel</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="p-3.5 rounded-2xl bg-white/85 flex flex-col justify-between">
+            <div class="text-xs font-extrabold text-[#2D264B]">1. Kebiasaan Belajar Teratur</div>
+            <p class="text-[11px] text-[#6E6888] my-1">Kehadiran di sekolah, mengerjakan tugas, membawa perlengkapan, tertib mengikuti pembelajaran.</p>
+            <div class="flex items-center justify-between pt-2 border-t border-purple-100">
+              <span class="text-[11px] font-bold text-[#6E6888]">Memenuhi Indikator:</span>
+              <span class="font-display font-black text-sm ${pctKar1 >= 85 ? 'text-emerald-700' : 'text-amber-700'}">${karTeraturOk} orang (${pctKar1}%)</span>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white/85 flex flex-col justify-between">
+            <div class="text-xs font-extrabold text-[#2D264B]">2. Tidak Mudah Menyerah (Tekun)</div>
+            <p class="text-[11px] text-[#6E6888] my-1">Murid tidak mudah menyerah saat belajar dan menghadapi soal literasi dan numerasi.</p>
+            <div class="flex items-center justify-between pt-2 border-t border-purple-100">
+              <span class="text-[11px] font-bold text-[#6E6888]">Memenuhi Indikator:</span>
+              <span class="font-display font-black text-sm ${pctKar2 >= 85 ? 'text-emerald-700' : 'text-amber-700'}">${karTekunOk} orang (${pctKar2}%)</span>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white/85 flex flex-col justify-between">
+            <div class="text-xs font-extrabold text-[#2D264B]">3. Mandiri Menyelesaikan Tugas</div>
+            <p class="text-[11px] text-[#6E6888] my-1">Murid mampu menyelesaikan tugas literasi dan numerasi secara mandiri (jujur/asli).</p>
+            <div class="flex items-center justify-between pt-2 border-t border-purple-100">
+              <span class="text-[11px] font-bold text-[#6E6888]">Memenuhi Indikator:</span>
+              <span class="font-display font-black text-sm ${pctKar3 >= 85 ? 'text-emerald-700' : 'text-amber-700'}">${karMandiriOk} orang (${pctKar3}%)</span>
             </div>
           </div>
         </div>
@@ -2481,15 +3095,15 @@
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
             <h3 class="font-display font-extrabold text-base text-[#2D264B]">
-              ${isAdmin ? `Rekapan Detail Capaian Literasi & Numerasi Siswa (${triwulan})` : `Form Kelola Target Literasi & Numerasi Siswa (${triwulan})`}
+              ${isAdmin ? `Daftar Rekapan Capaian Literasi, Numerasi & Karakter Murid (${triwulan})` : `Instrumen Input Capaian Literasi, Numerasi & Karakter Murid (${triwulan})`}
             </h3>
             <p class="text-xs text-[#6E6888]">
-              ${isAdmin ? 'Mode pantauan Admin (Hanya Baca & Cetak). Pengisian dilakukan oleh Guru di akun masing-masing.' : 'Data yang disimpan oleh Guru otomatis tampil di rekapan Admin & Portal Orang Tua Siswa.'}
+              ${isAdmin ? 'Mode pantauan Admin (Rekapan). Pengisian dilakukan secara objektif dan jujur oleh Guru.' : 'Isikan ketercapaian target setiap murid berdasarkan hasil penilaian objektif sesuai panduan Dinas DIKPORA.'}
             </p>
           </div>
           ${!isAdmin ? `
             <button onclick="window.app.markAllLitnumTercapai()" class="clay-btn-soft px-3.5 py-1.5 text-xs font-extrabold text-emerald-700">
-              <i class="ph-fill ph-checks"></i> Set Semua Tercapai
+              <i class="ph-fill ph-checks"></i> Set Semua Tuntas / Memenuhi
             </button>
           ` : ''}
         </div>
@@ -2497,14 +3111,17 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b-2 border-purple-200/60 text-[11px] font-extrabold text-[#6E6888] uppercase">
-                <th class="py-3 px-2.5">No</th>
-                <th class="py-3 px-2.5">Nama Siswa & Kelas</th>
-                <th class="py-3 px-2.5 text-center bg-[#FBF0D9]/50">Status Literasi</th>
-                <th class="py-3 px-2.5 text-center bg-[#FBF0D9]/50">Skor Lit</th>
-                <th class="py-3 px-2.5 text-center bg-[#E1ECF9]/50">Status Numerasi</th>
-                <th class="py-3 px-2.5 text-center bg-[#E1ECF9]/50">Skor Num</th>
-                <th class="py-3 px-2.5">Catatan Perkembangan & Guru Penilai</th>
+              <tr class="border-b-2 border-purple-200/60 text-[10px] font-extrabold text-[#6E6888] uppercase">
+                <th class="py-3 px-2">No</th>
+                <th class="py-3 px-2">Nama Murid & Kelas</th>
+                <th class="py-3 px-2 text-center bg-[#FBF0D9]/50">Target Literasi</th>
+                <th class="py-3 px-2 text-center bg-[#FBF0D9]/50">Nilai Lit</th>
+                <th class="py-3 px-2 text-center bg-[#E1ECF9]/50">Target Numerasi</th>
+                <th class="py-3 px-2 text-center bg-[#E1ECF9]/50">Nilai Num</th>
+                <th class="py-3 px-2 text-center bg-[#EDE6FA]/50" title="Kebiasaan Belajar Teratur">Kar 1: Teratur</th>
+                <th class="py-3 px-2 text-center bg-[#EDE6FA]/50" title="Tidak Mudah Menyerah">Kar 2: Tekun</th>
+                <th class="py-3 px-2 text-center bg-[#EDE6FA]/50" title="Menyelesaikan Tugas Mandiri">Kar 3: Mandiri</th>
+                <th class="py-3 px-2">Catatan Umpan Balik / Tindak Lanjut Guru</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
@@ -2514,31 +3131,37 @@
                 const skLit = rec.skor_literasi ?? '-';
                 const stNum = rec.status_numerasi || 'Belum Dinilai';
                 const skNum = rec.skor_numerasi ?? '-';
+                const k1 = rec.karakter_teratur || 'Memenuhi';
+                const k2 = rec.karakter_tekun || 'Memenuhi';
+                const k3 = rec.karakter_mandiri || 'Memenuhi';
                 const cat = rec.catatan_guru || '';
 
                 if (isAdmin) {
                   return `
                     <tr class="hover:bg-white/70">
-                      <td class="py-3 px-2.5">${idx + 1}</td>
-                      <td class="py-3 px-2.5">
+                      <td class="py-3 px-2">${idx + 1}</td>
+                      <td class="py-3 px-2">
                         <div class="font-extrabold text-[#2D264B]">${s.nama_siswa}</div>
                         <div class="text-[10px] text-[#6E6888]">${getKelasName(s.id_kelas)} • NIS: ${s.nis}</div>
                       </td>
-                      <td class="py-3 px-2.5 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${stLit === 'Tercapai' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
+                      <td class="py-3 px-2 text-center">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${stLit === 'Tercapai' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
                           ${stLit}
                         </span>
                       </td>
-                      <td class="py-3 px-2.5 text-center font-extrabold">${skLit}</td>
-                      <td class="py-3 px-2.5 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${stNum === 'Tercapai' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
+                      <td class="py-3 px-2 text-center font-extrabold">${skLit}</td>
+                      <td class="py-3 px-2 text-center">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${stNum === 'Tercapai' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
                           ${stNum}
                         </span>
                       </td>
-                      <td class="py-3 px-2.5 text-center font-extrabold">${skNum}</td>
-                      <td class="py-3 px-2.5">
+                      <td class="py-3 px-2 text-center font-extrabold">${skNum}</td>
+                      <td class="py-3 px-2 text-center"><span class="text-[10px] font-extrabold ${k1 === 'Memenuhi' ? 'text-emerald-700' : 'text-rose-600'}">${k1}</span></td>
+                      <td class="py-3 px-2 text-center"><span class="text-[10px] font-extrabold ${k2 === 'Memenuhi' ? 'text-emerald-700' : 'text-rose-600'}">${k2}</span></td>
+                      <td class="py-3 px-2 text-center"><span class="text-[10px] font-extrabold ${k3 === 'Memenuhi' ? 'text-emerald-700' : 'text-rose-600'}">${k3}</span></td>
+                      <td class="py-3 px-2">
                         <div class="text-[#2D264B]">${cat || '-'}</div>
-                        ${rec.nama_guru ? `<div class="text-[10px] text-[#7E65D4] font-bold">Dinilai oleh: ${rec.nama_guru}</div>` : ''}
+                        ${rec.nama_guru ? `<div class="text-[10px] text-[#7E65D4] font-bold">Oleh: ${rec.nama_guru}</div>` : ''}
                       </td>
                     </tr>
                   `;
@@ -2550,35 +3173,53 @@
                 const editSkNum = rec.skor_numerasi ?? 85;
                 return `
                   <tr class="hover:bg-white/70" data-litnum-row="${s.id}" data-litnum-kelas="${s.id_kelas}">
-                    <td class="py-3 px-2.5">${idx + 1}</td>
-                    <td class="py-3 px-2.5">
+                    <td class="py-3 px-2">${idx + 1}</td>
+                    <td class="py-3 px-2">
                       <div class="font-extrabold text-[#2D264B]">${s.nama_siswa}</div>
                       <div class="text-[10px] text-[#6E6888]">${getKelasName(s.id_kelas)} • NIS: ${s.nis}</div>
                     </td>
-                    <td class="py-3 px-2.5 text-center">
-                      <select id="stlit_${s.id}" class="clay-input px-2.5 py-1.5 text-xs font-extrabold ${editStLit === 'Tercapai' ? 'text-emerald-700' : 'text-rose-600'}">
-                        <option value="Tercapai" ${editStLit === 'Tercapai' ? 'selected' : ''}>✅ Tercapai</option>
-                        <option value="Belum Tercapai" ${editStLit === 'Belum Tercapai' ? 'selected' : ''}>⏳ Belum Tercapai</option>
+                    <td class="py-3 px-2 text-center">
+                      <select id="stlit_${s.id}" class="clay-input px-2 py-1 text-[11px] font-extrabold ${editStLit === 'Tercapai' ? 'text-emerald-700' : 'text-rose-600'}">
+                        <option value="Tercapai" ${editStLit === 'Tercapai' ? 'selected' : ''}>✅ Tuntas</option>
+                        <option value="Belum Tercapai" ${editStLit === 'Belum Tercapai' ? 'selected' : ''}>⏳ Belum</option>
                       </select>
                     </td>
-                    <td class="py-3 px-2.5 text-center">
-                      <input type="number" min="0" max="100" id="sklit_${s.id}" value="${editSkLit}" class="clay-input w-16 text-center py-1.5 font-extrabold" />
+                    <td class="py-3 px-2 text-center">
+                      <input type="number" min="0" max="100" id="sklit_${s.id}" value="${editSkLit}" class="clay-input w-14 text-center py-1 font-extrabold" />
                     </td>
-                    <td class="py-3 px-2.5 text-center">
-                      <select id="stnum_${s.id}" class="clay-input px-2.5 py-1.5 text-xs font-extrabold ${editStNum === 'Tercapai' ? 'text-emerald-700' : 'text-rose-600'}">
-                        <option value="Tercapai" ${editStNum === 'Tercapai' ? 'selected' : ''}>✅ Tercapai</option>
-                        <option value="Belum Tercapai" ${editStNum === 'Belum Tercapai' ? 'selected' : ''}>⏳ Belum Tercapai</option>
+                    <td class="py-3 px-2 text-center">
+                      <select id="stnum_${s.id}" class="clay-input px-2 py-1 text-[11px] font-extrabold ${editStNum === 'Tercapai' ? 'text-emerald-700' : 'text-rose-600'}">
+                        <option value="Tercapai" ${editStNum === 'Tercapai' ? 'selected' : ''}>✅ Tuntas</option>
+                        <option value="Belum Tercapai" ${editStNum === 'Belum Tercapai' ? 'selected' : ''}>⏳ Belum</option>
                       </select>
                     </td>
-                    <td class="py-3 px-2.5 text-center">
-                      <input type="number" min="0" max="100" id="sknum_${s.id}" value="${editSkNum}" class="clay-input w-16 text-center py-1.5 font-extrabold" />
+                    <td class="py-3 px-2 text-center">
+                      <input type="number" min="0" max="100" id="sknum_${s.id}" value="${editSkNum}" class="clay-input w-14 text-center py-1 font-extrabold" />
                     </td>
-                    <td class="py-3 px-2.5">
-                      <input type="text" id="catln_${s.id}" value="${cat}" placeholder="Catatan untuk orang tua..." class="clay-input w-full px-3 py-1.5 text-xs" />
+                    <td class="py-3 px-2 text-center">
+                      <select id="kar1_${s.id}" class="clay-input px-2 py-1 text-[10px] font-extrabold">
+                        <option value="Memenuhi" ${k1 === 'Memenuhi' ? 'selected' : ''}>✔ Ya</option>
+                        <option value="Belum Memenuhi" ${k1 === 'Belum Memenuhi' ? 'selected' : ''}>✖ Belum</option>
+                      </select>
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                      <select id="kar2_${s.id}" class="clay-input px-2 py-1 text-[10px] font-extrabold">
+                        <option value="Memenuhi" ${k2 === 'Memenuhi' ? 'selected' : ''}>✔ Ya</option>
+                        <option value="Belum Memenuhi" ${k2 === 'Belum Memenuhi' ? 'selected' : ''}>✖ Belum</option>
+                      </select>
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                      <select id="kar3_${s.id}" class="clay-input px-2 py-1 text-[10px] font-extrabold">
+                        <option value="Memenuhi" ${k3 === 'Memenuhi' ? 'selected' : ''}>✔ Ya</option>
+                        <option value="Belum Memenuhi" ${k3 === 'Belum Memenuhi' ? 'selected' : ''}>✖ Belum</option>
+                      </select>
+                    </td>
+                    <td class="py-3 px-2">
+                      <input type="text" id="catln_${s.id}" value="${cat}" placeholder="Umpan balik / tindak lanjut..." class="clay-input w-full px-2.5 py-1 text-xs" />
                     </td>
                   </tr>
                 `;
-              }).join('') || `<tr><td colspan="7" class="py-8 text-center text-[#6E6888]">Tidak ada data siswa.</td></tr>`}
+              }).join('') || `<tr><td colspan="10" class="py-8 text-center text-[#6E6888]">Tidak ada data siswa.</td></tr>`}
             </tbody>
           </table>
         </div>
@@ -3025,41 +3666,142 @@
       </div>
     `;
 
-    if (subMenu === 'ortu_literasi') {
+    if (subMenu === 'ortu_erapor') {
+      const faseStr = getFaseByTingkat(kls.tingkat || 5);
+      const raporRec = state.erapor_data.find(r => r.id_siswa === sis.id && r.tahun_pelajaran === state.activeTapel) || {};
+      let customCapaian = {};
+      try {
+        customCapaian = raporRec.capaian_custom_json ? JSON.parse(raporRec.capaian_custom_json) : {};
+      } catch (e) {
+        customCapaian = {};
+      }
+
       return `
         ${headerBannerHtml}
-        <div class="clay-card p-6">
-          <h3 class="font-display font-extrabold text-lg text-[#2D264B] mb-1">Pantauan Target Literasi & Numerasi Anak (Triwulan I s.d. IV)</h3>
-          <p class="text-xs text-[#6E6888] mb-4">Perkembangan ketercapaian kompetensi literasi dan numerasi putra/putri Anda setiap triwulan</p>
+        <div class="clay-card p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-purple-200/60">
+            <div>
+              <span class="px-3 py-0.5 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-[10px] font-extrabold">${faseStr} • Kurikulum Merdeka</span>
+              <h3 class="font-display font-extrabold text-lg text-[#2D264B] mt-1">Laporan Hasil Belajar (E-Rapor) — ${sis.nama_siswa}</h3>
+              <p class="text-xs text-[#6E6888]">Capaian Kompetensi Intrakurikuler, Projek P5, Ekstrakurikuler & Kehadiran</p>
+            </div>
+            <button onclick="window.app.printSingleERapor('${sis.id}')" class="clay-btn-primary px-4 py-2.5 text-xs font-extrabold flex items-center gap-1.5">
+              <i class="ph-bold ph-printer text-base"></i> Cetak E-Rapor Resmi (F4)
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b-2 border-purple-200/60 text-[11px] font-extrabold text-[#6E6888] uppercase">
+                  <th class="py-3 px-3 w-10">No</th>
+                  <th class="py-3 px-3 w-48">Mata Pelajaran</th>
+                  <th class="py-3 px-3 w-24 text-center">Nilai Akhir</th>
+                  <th class="py-3 px-3">Capaian Kompetensi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-purple-100/70 text-xs font-semibold">
+                ${DAFTAR_MAPEL_SD.map((m, idx) => {
+                  const rec = nilaiLogs.find(n => n.mata_pelajaran === m);
+                  const na = rec?.nilai_akhir ?? '-';
+                  const autoD = generateAutoCapaianDeskripsi(sis.nama_siswa, m, na);
+                  const desc = customCapaian[m] || `${autoD.tertinggi} ${autoD.peningkatan}`;
+                  return `
+                    <tr>
+                      <td class="py-3 px-3">${idx + 1}</td>
+                      <td class="py-3 px-3 font-extrabold text-[#2D264B]">${m}</td>
+                      <td class="py-3 px-3 text-center font-display font-black text-sm text-[#7E65D4]">${na}</td>
+                      <td class="py-3 px-3 text-[#2D264B] leading-relaxed">${desc}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-xs">
+            <div class="p-4 rounded-2xl bg-[#FBF0D9]/60 space-y-1">
+              <div class="font-extrabold text-[#2D264B]">🌟 Kokurikuler (Projek Penguatan Profil Pelajar Pancasila / P5)</div>
+              <p class="text-[#6E6888] leading-relaxed">${raporRec.kokurikuler_p5 || `Ananda ${sis.nama_siswa} mengikuti kegiatan projek P5 dengan baik dan menunjukkan sikap gotong royong serta bernalar kritis.`}</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#EDE6FA]/60 space-y-1">
+              <div class="font-extrabold text-[#2D264B]">💬 Catatan Wali Kelas & Keputusan</div>
+              <p class="text-[#2D264B] font-semibold">"${raporRec.catatan_wali || 'Pertahankan semangat belajar dan prestasimu di semester berikutnya.'}"</p>
+              <div class="text-[11px] font-extrabold text-[#7E65D4] pt-1">Status: ${raporRec.status_kenaikan || 'Tuntas / Naik Kelas'}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if (subMenu === 'ortu_literasi') {
+      const tingkatAnak = kls.tingkat || 5;
+      const panduanKelasAnak = PANDUAN_LITNUM_SD[tingkatAnak] || PANDUAN_LITNUM_SD[5];
+      return `
+        ${headerBannerHtml}
+        <div class="clay-card p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-purple-200/60">
+            <div>
+              <span class="px-3 py-0.5 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-[10px] font-extrabold">
+                Sesuai Panduan Capaian Pembelajaran Kab. Donggala • ${panduanKelasAnak.nama_tingkat}
+              </span>
+              <h3 class="font-display font-extrabold text-lg text-[#2D264B] mt-1">Pantauan Target Literasi, Numerasi & Karakter Anak (Triwulan I s.d. IV)</h3>
+              <p class="text-xs text-[#6E6888]">Indikator resmi per triwulan berdasarkan tingkat kelas putra/putri Anda</p>
+            </div>
+          </div>
+
+          <!-- Target Satu Tahun Kelas Anak -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-2xl bg-[#FBF0D9]/60">
+              <div class="font-extrabold text-[#2D264B] mb-1.5">📖 Target Satu Tahun Kemampuan Literasi (${panduanKelasAnak.nama_tingkat}):</div>
+              <div class="space-y-0.5 text-[#6E6888] font-semibold">
+                ${panduanKelasAnak.target_tahunan_literasi.map(t => `<div>${t}</div>`).join('')}
+              </div>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#E1ECF9]/60">
+              <div class="font-extrabold text-[#2D264B] mb-1.5">🔢 Target Satu Tahun Kemampuan Numerasi (${panduanKelasAnak.nama_tingkat}):</div>
+              <div class="space-y-0.5 text-[#6E6888] font-semibold">
+                ${panduanKelasAnak.target_tahunan_numerasi.map(t => `<div>${t}</div>`).join('')}
+              </div>
+            </div>
+          </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             ${['Triwulan 1', 'Triwulan 2', 'Triwulan 3', 'Triwulan 4'].map(tw => {
               const rec = litnumLogs.find(r => r.triwulan === tw);
+              const refTw = getPanduanLitnumByTingkatAndTriwulan(tingkatAnak, tw);
               return `
                 <div class="p-5 rounded-3xl bg-white/85 border border-purple-200/60 shadow-xs space-y-3">
                   <div class="flex items-center justify-between">
                     <span class="px-3 py-1 rounded-full bg-[#EDE6FA] text-[#7E65D4] text-xs font-extrabold">${tw}</span>
-                    <span class="text-[11px] font-bold text-[#6E6888]">${rec ? `Oleh: ${rec.nama_guru}` : 'Belum dinilai'}</span>
+                    <span class="text-[11px] font-bold text-[#6E6888]">${rec ? `Penilai: ${rec.nama_guru}` : PERIODE_TRIWULAN_INFO[tw].split('(')[0]}</span>
+                  </div>
+                  <div class="p-3 rounded-2xl bg-[#FBF0D9]/60 space-y-1">
+                    <div class="flex items-center justify-between text-xs font-extrabold">
+                      <span>📖 Literasi ${rec ? `(Nilai: ${rec.skor_literasi})` : ''}</span>
+                      <span class="px-2.5 py-0.5 rounded-full text-[10px] ${rec?.status_literasi === 'Tercapai' ? 'bg-emerald-500 text-white' : rec ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${rec ? rec.status_literasi : 'Target Triwulan'}</span>
+                    </div>
+                    <p class="text-[11px] font-bold text-[#2D264B]">Indikator: ${rec?.target_literasi_desc || refTw.lit_indikator}</p>
+                    <p class="text-[10px] text-[#6E6888]"><i>Contoh Latihan di Rumah: ${refTw.lit_contoh}</i></p>
+                  </div>
+                  <div class="p-3 rounded-2xl bg-[#E1ECF9]/60 space-y-1">
+                    <div class="flex items-center justify-between text-xs font-extrabold">
+                      <span>🔢 Numerasi ${rec ? `(Nilai: ${rec.skor_numerasi})` : ''}</span>
+                      <span class="px-2.5 py-0.5 rounded-full text-[10px] ${rec?.status_numerasi === 'Tercapai' ? 'bg-emerald-500 text-white' : rec ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-700'}">${rec ? rec.status_numerasi : 'Target Triwulan'}</span>
+                    </div>
+                    <p class="text-[11px] font-bold text-[#2D264B]">Indikator: ${rec?.target_numerasi_desc || refTw.num_indikator}</p>
+                    <p class="text-[10px] text-[#6E6888]"><i>Contoh Latihan di Rumah: ${refTw.num_contoh}</i></p>
                   </div>
                   ${rec ? `
-                    <div class="p-3 rounded-2xl bg-[#FBF0D9]/60 space-y-1">
-                      <div class="flex items-center justify-between text-xs font-extrabold">
-                        <span>📖 Target Literasi (Skor: ${rec.skor_literasi})</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] ${rec.status_literasi === 'Tercapai' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}">${rec.status_literasi}</span>
-                      </div>
-                      <p class="text-[11px] text-[#6E6888]">${rec.target_literasi_desc}</p>
-                    </div>
-                    <div class="p-3 rounded-2xl bg-[#E1ECF9]/60 space-y-1">
-                      <div class="flex items-center justify-between text-xs font-extrabold">
-                        <span>🔢 Target Numerasi (Skor: ${rec.skor_numerasi})</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] ${rec.status_numerasi === 'Tercapai' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}">${rec.status_numerasi}</span>
-                      </div>
-                      <p class="text-[11px] text-[#6E6888]">${rec.target_numerasi_desc}</p>
+                    <div class="flex flex-wrap gap-1.5 text-[10px] font-extrabold">
+                      <span class="px-2.5 py-1 rounded-full bg-[#EDE6FA] text-[#7E65D4]">Belajar Teratur: ${rec.karakter_teratur || 'Memenuhi'}</span>
+                      <span class="px-2.5 py-1 rounded-full bg-[#EDE6FA] text-[#7E65D4]">Tidak Mudah Menyerah: ${rec.karakter_tekun || 'Memenuhi'}</span>
+                      <span class="px-2.5 py-1 rounded-full bg-[#EDE6FA] text-[#7E65D4]">Tugas Mandiri: ${rec.karakter_mandiri || 'Memenuhi'}</span>
                     </div>
                     <div class="text-xs font-semibold text-[#2D264B] bg-[#EDE6FA]/40 p-3 rounded-xl">
                       <b>Catatan Guru:</b> ${rec.catatan_guru || 'Anak mengikuti kegiatan pembelajaran dengan baik.'}
                     </div>
-                  ` : `<p class="text-xs text-[#6E6888] py-4 text-center">Data evaluasi ${tw} belum diinput oleh guru.</p>`}
+                  ` : ''}
                 </div>
               `;
             }).join('')}
@@ -4066,10 +4808,314 @@
     showToast('Rekap Buku Nilai berhasil diekspor ke Excel (.xlsx)!');
   }
 
-  // LITERASI & NUMERASI TRIWULAN HANDLERS
+  // E-RAPOR KURIKULUM MERDEKA HANDLERS
+  function selectRaporSiswa(id_siswa) {
+    state.selectedRaporSiswaId = id_siswa;
+    renderCurrentMenu();
+  }
+
+  async function saveERaporSiswa(id_siswa) {
+    if (state.currentUser?.role === 'ADMIN') {
+      showToast('Pengisian narasi E-Rapor dilakukan oleh Guru!', 'error');
+      return;
+    }
+    const sis = getSiswaObj(id_siswa);
+    const kls = state.data_kelas.find(k => k.id === sis.id_kelas);
+    const fase = getFaseByTingkat(kls?.tingkat || 5);
+
+    const capaianObj = {};
+    document.querySelectorAll('[data-mapel-name]').forEach(el => {
+      const mName = el.getAttribute('data-mapel-name');
+      capaianObj[mName] = el.value.trim();
+    });
+
+    const payload = {
+      id_siswa,
+      id_kelas: sis.id_kelas,
+      fase,
+      kokurikuler_p5: document.getElementById('rapor-p5')?.value.trim() || '',
+      ekskul_1_nama: document.getElementById('rapor-eks1-nama')?.value.trim() || 'Pramuka',
+      ekskul_1_predikat: document.getElementById('rapor-eks1-pred')?.value || 'Baik',
+      ekskul_1_ket: document.getElementById('rapor-eks1-ket')?.value.trim() || '',
+      ekskul_2_nama: document.getElementById('rapor-eks2-nama')?.value.trim() || '',
+      ekskul_2_predikat: document.getElementById('rapor-eks2-pred')?.value || 'Baik',
+      ekskul_2_ket: document.getElementById('rapor-eks2-ket')?.value.trim() || '',
+      catatan_wali: document.getElementById('rapor-catatan')?.value.trim() || '',
+      status_kenaikan: document.getElementById('rapor-kenaikan')?.value.trim() || '',
+      capaian_custom_json: JSON.stringify(capaianObj),
+      tahun_pelajaran: state.activeTapel,
+      semester: state.activeTapel.toLowerCase().includes('genap') ? 'Genap' : 'Ganjil'
+    };
+
+    const existing = state.erapor_data.find(r => r.id_siswa === id_siswa && r.tahun_pelajaran === state.activeTapel);
+    if (existing) await dbUpdate('erapor_data', existing.id, payload);
+    else await dbInsert('erapor_data', payload);
+
+    showToast(`Data E-Rapor Kurikulum Merdeka untuk ${sis.nama_siswa} berhasil disimpan!`);
+    renderCurrentMenu();
+  }
+
+  function printSingleERapor(id_siswa) {
+    const sis = getSiswaObj(id_siswa);
+    const school = getActiveSchoolProfile();
+    const kls = state.data_kelas.find(k => k.id === sis.id_kelas) || {};
+    const fase = getFaseByTingkat(kls.tingkat || 5);
+    const raporRec = state.erapor_data.find(r => r.id_siswa === id_siswa && r.tahun_pelajaran === state.activeTapel) || {};
+
+    let customCapaian = {};
+    try {
+      customCapaian = raporRec.capaian_custom_json ? JSON.parse(raporRec.capaian_custom_json) : {};
+    } catch (e) {
+      customCapaian = {};
+    }
+
+    const absLogs = state.daftar_hadir.filter(a => a.id_siswa === id_siswa);
+    const sakit = absLogs.filter(a => a.status_hadir === 'S').length;
+    const izin = absLogs.filter(a => a.status_hadir === 'I').length;
+    const alpa = absLogs.filter(a => a.status_hadir === 'A').length;
+
+    const todayStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    const logoKiri = school.logo_kiri_url || '';
+    const logoKanan = school.logo_kanan_url || '';
+    const waliNama = kls.wali_kelas_nama || state.currentUser?.nama || 'Wali Kelas';
+    const waliUser = state.guru_users.find(g => g.id_kelas_ampu === sis.id_kelas);
+    const waliNip = waliUser?.nip || '-';
+
+    const html = `
+      <table style="width:100%; border-bottom: 3px double #000; padding-bottom: 6px; margin-bottom: 10px; border-collapse: collapse;">
+        <tr>
+          <td style="width: 75px; text-align: left; vertical-align: middle; border: none;">
+            ${logoKiri ? `<img src="${logoKiri}" style="width: 62px; height: 62px; object-fit: contain;" />` : ''}
+          </td>
+          <td style="text-align: center; vertical-align: middle; border: none; line-height: 1.2;">
+            <div style="font-size: 11pt; font-weight: bold; text-transform: uppercase;">${school.kop_baris1 || 'PEMERINTAH KABUPATEN / KOTA'}</div>
+            <div style="font-size: 12pt; font-weight: bold; text-transform: uppercase;">${school.kop_baris2 || 'DINAS PENDIDIKAN DAN KEBUDAYAAN'}</div>
+            <div style="font-size: 15pt; font-weight: bold; text-transform: uppercase;">${school.nama_sekolah}</div>
+            <div style="font-size: 9pt;">${school.alamat_sekolah || ''} • NPSN: ${school.npsn}</div>
+          </td>
+          <td style="width: 75px; text-align: right; vertical-align: middle; border: none;">
+            ${logoKanan ? `<img src="${logoKanan}" style="width: 62px; height: 62px; object-fit: contain;" />` : ''}
+          </td>
+        </tr>
+      </table>
+
+      <div style="text-align:center; font-size: 12pt; font-weight:bold; text-transform:uppercase; margin-bottom: 10px;">
+        LAPORAN HASIL BELAJAR PESERTA DIDIK (RAPOR KURIKULUM MERDEKA)
+      </div>
+
+      <table style="width:100%; font-size: 10pt; margin-bottom: 10px; border:none;">
+        <tr>
+          <td style="width:18%; border:none; padding:2px 0;">Nama Peserta Didik</td>
+          <td style="width:34%; border:none; padding:2px 0;">: <b>${sis.nama_siswa}</b></td>
+          <td style="width:18%; border:none; padding:2px 0;">Kelas / Fase</td>
+          <td style="width:30%; border:none; padding:2px 0;">: ${kls.nama_kelas || '-'} / ${fase}</td>
+        </tr>
+        <tr>
+          <td style="border:none; padding:2px 0;">NIS / NISN</td>
+          <td style="border:none; padding:2px 0;">: ${sis.nis} / ${sis.nisn}</td>
+          <td style="border:none; padding:2px 0;">Semester</td>
+          <td style="border:none; padding:2px 0;">: ${school.semester || (state.activeTapel.includes('Genap') ? 'Genap' : 'Ganjil')}</td>
+        </tr>
+        <tr>
+          <td style="border:none; padding:2px 0;">Nama Sekolah</td>
+          <td style="border:none; padding:2px 0;">: ${school.nama_sekolah}</td>
+          <td style="border:none; padding:2px 0;">Tahun Pelajaran</td>
+          <td style="border:none; padding:2px 0;">: ${state.activeTapel}</td>
+        </tr>
+      </table>
+
+      <div style="font-size:10.5pt; font-weight:bold; margin-top:6px;">A. NILAI AKADEMIK (INTRAKURIKULER)</div>
+      <table class="print-table" style="font-size: 9.5pt; margin-top: 4px;">
+        <thead>
+          <tr>
+            <th style="width:32px;">No</th>
+            <th style="width:165px;">Mata Pelajaran</th>
+            <th style="width:65px;">Nilai Akhir</th>
+            <th>Capaian Kompetensi</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${DAFTAR_MAPEL_SD.map((m, idx) => {
+            const rec = state.buku_nilai.find(n => n.id_siswa === id_siswa && n.mata_pelajaran === m);
+            const na = rec?.nilai_akhir ?? '-';
+            const autoD = generateAutoCapaianDeskripsi(sis.nama_siswa, m, na);
+            const desc = customCapaian[m] || `${autoD.tertinggi} ${autoD.peningkatan}`;
+            return `
+              <tr>
+                <td style="text-align:center;">${idx + 1}</td>
+                <td><b>${m}</b></td>
+                <td style="text-align:center; font-weight:bold;">${na}</td>
+                <td style="line-height:1.3;">${desc}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+
+      <div style="font-size:10.5pt; font-weight:bold; margin-top:10px;">B. KOKURIKULER (PROJEK PENGUATAN PROFIL PELAJAR PANCASILA / P5)</div>
+      <table class="print-table" style="font-size: 9.5pt; margin-top: 4px;">
+        <tbody>
+          <tr>
+            <td style="padding: 6px 8px; line-height: 1.35;">
+              ${raporRec.kokurikuler_p5 || `Ananda ${sis.nama_siswa} menunjukkan perkembangan Berkembang Sesuai Harapan (BSH) dalam Projek Penguatan Profil Pelajar Pancasila (P5) pada dimensi Gotong Royong, Mandiri, dan Bernalar Kritis.`}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="font-size:10.5pt; font-weight:bold; margin-top:10px;">C. EKSTRAKURIKULER</div>
+      <table class="print-table" style="font-size: 9.5pt; margin-top: 4px;">
+        <thead>
+          <tr>
+            <th style="width:32px;">No</th>
+            <th style="width:180px;">Kegiatan Ekstrakurikuler</th>
+            <th style="width:90px;">Predikat</th>
+            <th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:center;">1</td>
+            <td>${raporRec.ekskul_1_nama || 'Pramuka'}</td>
+            <td style="text-align:center;">${raporRec.ekskul_1_predikat || 'Baik'}</td>
+            <td>${raporRec.ekskul_1_ket || 'Aktif mengikuti kegiatan kepramukaan.'}</td>
+          </tr>
+          <tr>
+            <td style="text-align:center;">2</td>
+            <td>${raporRec.ekskul_2_nama || '-'}</td>
+            <td style="text-align:center;">${raporRec.ekskul_2_nama ? (raporRec.ekskul_2_predikat || 'Baik') : '-'}</td>
+            <td>${raporRec.ekskul_2_ket || '-'}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="display:flex; gap:14px; margin-top:10px;">
+        <div style="width:45%;">
+          <div style="font-size:10.5pt; font-weight:bold;">D. KETIDAKHADIRAN</div>
+          <table class="print-table" style="font-size: 9.5pt; margin-top: 4px;">
+            <tbody>
+              <tr><td>Sakit (S)</td><td style="text-align:center; width:80px;">${sakit} hari</td></tr>
+              <tr><td>Izin (I)</td><td style="text-align:center;">${izin} hari</td></tr>
+              <tr><td>Tanpa Keterangan (A)</td><td style="text-align:center;">${alpa} hari</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="width:55%;">
+          <div style="font-size:10.5pt; font-weight:bold;">E. CATATAN WALI KELAS & KEPUTUSAN</div>
+          <table class="print-table" style="font-size: 9.5pt; margin-top: 4px;">
+            <tbody>
+              <tr>
+                <td style="padding:6px 8px;">
+                  ${raporRec.catatan_wali || 'Pertahankan prestasi dan semangat belajarmu.'}
+                  <div style="margin-top:4px; font-weight:bold;">Status: ${raporRec.status_kenaikan || 'Naik Kelas / Tuntas'}</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <table style="width:100%; margin-top: 22px; font-size: 10pt; border:none;">
+        <tr>
+          <td style="width:33%; text-align:center; border:none;">
+            Mengetahui,<br/>Orang Tua / Wali Peserta Didik<br/><br/><br/><br/>
+            <b><u>${sis.nama_ortu || '................................'}</u></b>
+          </td>
+          <td style="width:34%; text-align:center; border:none;">
+            Mengetahui,<br/>Kepala ${school.nama_sekolah}<br/><br/><br/><br/>
+            <b><u>${school.kepala_sekolah}</u></b><br/>
+            NIP. ${school.nip_kepsek}
+          </td>
+          <td style="width:33%; text-align:center; border:none;">
+            ${todayStr}<br/>Wali ${kls.nama_kelas || 'Kelas'}<br/><br/><br/><br/>
+            <b><u>${waliNama}</u></b><br/>
+            NIP. ${waliNip}
+          </td>
+        </tr>
+      </table>
+    `;
+
+    const printArea = document.getElementById('print-area');
+    printArea.innerHTML = html;
+    window.print();
+  }
+
+  function exportLegerERaporExcel() {
+    const students = getAccessibleStudents();
+    const rows = students.map((s, idx) => {
+      const rRec = state.erapor_data.find(r => r.id_siswa === s.id && r.tahun_pelajaran === state.activeTapel) || {};
+      const rowObj = {
+        No: idx + 1,
+        NIS: s.nis,
+        NISN: s.nisn,
+        Nama_Siswa: s.nama_siswa,
+        Kelas: getKelasName(s.id_kelas)
+      };
+      DAFTAR_MAPEL_SD.forEach(m => {
+        const nRec = state.buku_nilai.find(n => n.id_siswa === s.id && n.mata_pelajaran === m);
+        rowObj[m] = nRec ? nRec.nilai_akhir : '-';
+      });
+      rowObj.Kokurikuler_P5 = rRec.kokurikuler_p5 || '-';
+      rowObj.Catatan_Wali = rRec.catatan_wali || '-';
+      rowObj.Status_Kenaikan = rRec.status_kenaikan || 'Tuntas';
+      return rowObj;
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Leger_ERapor');
+    XLSX.writeFile(wb, `Leger_ERapor_Kurikulum_Merdeka_${state.activeTapel.replace(/\W+/g, '_')}.xlsx`);
+    showToast('Leger E-Rapor berhasil diekspor ke Excel (.xlsx)!');
+  }
+
+  // LITERASI, NUMERASI & KARAKTER TRIWULAN HANDLERS (SESUAI PANDUAN KAB. DONGGALA)
   function setLitnumTriwulan(tw) {
     state.litnumTriwulan = tw;
     renderCurrentMenu();
+  }
+
+  function setLitnumTingkatRef(tingkatVal) {
+    state.litnumPreviewTingkat = Number(tingkatVal);
+    renderCurrentMenu();
+  }
+
+  function openModalMatriksPanduanLengkap(tingkat = 5) {
+    const data = PANDUAN_LITNUM_SD[Number(tingkat)] || PANDUAN_LITNUM_SD[5];
+    openModal(`Matriks Panduan Resmi — ${data.nama_tingkat}`, `
+      <div class="space-y-4 text-xs">
+        <div class="flex items-center justify-between bg-[#EDE6FA] p-3 rounded-2xl">
+          <span class="font-extrabold text-[#2D264B]">Pilih Tingkat Kelas SD (Lampiran 2 & 3):</span>
+          <select onchange="window.app.openModalMatriksPanduanLengkap(this.value)" class="clay-input px-3 py-1.5 font-extrabold text-[#7E65D4]">
+            ${[1, 2, 3, 4, 5, 6].map(t => `<option value="${t}" ${Number(tingkat) === t ? 'selected' : ''}>Kelas ${t}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 rounded-2xl bg-[#FBF0D9]/70 space-y-1">
+            <div class="font-extrabold text-[#2D264B]">📖 Target 1 Tahun Literasi (${data.nama_tingkat})</div>
+            ${data.target_tahunan_literasi.map(x => `<div class="text-[11px] text-[#6E6888] font-semibold">${x}</div>`).join('')}
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#E1ECF9]/70 space-y-1">
+            <div class="font-extrabold text-[#2D264B]">🔢 Target 1 Tahun Numerasi (${data.nama_tingkat})</div>
+            ${data.target_tahunan_numerasi.map(x => `<div class="text-[11px] text-[#6E6888] font-semibold">${x}</div>`).join('')}
+          </div>
+        </div>
+
+        <div class="space-y-2.5">
+          ${['Triwulan 1', 'Triwulan 2', 'Triwulan 3', 'Triwulan 4'].map(tw => {
+            const d = data.triwulan[tw];
+            return `
+              <div class="p-3.5 rounded-2xl bg-white border border-purple-200/70 space-y-1.5">
+                <div class="font-extrabold text-[#7E65D4] uppercase">${tw} — ${PERIODE_TRIWULAN_INFO[tw]}</div>
+                <div><b>Indikator Literasi:</b> ${d.lit_indikator}</div>
+                <div class="text-[11px] text-[#6E6888]"><i>Contoh Soal Lit: ${d.lit_contoh}</i></div>
+                <div class="pt-1"><b>Indikator Numerasi:</b> ${d.num_indikator}</div>
+                <div class="text-[11px] text-[#6E6888]"><i>Contoh Soal Num: ${d.num_contoh}</i></div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `);
   }
 
   function markAllLitnumTercapai() {
@@ -4077,10 +5123,16 @@
       const id = row.getAttribute('data-litnum-row');
       const s1 = document.getElementById(`stlit_${id}`);
       const s2 = document.getElementById(`stnum_${id}`);
+      const k1 = document.getElementById(`kar1_${id}`);
+      const k2 = document.getElementById(`kar2_${id}`);
+      const k3 = document.getElementById(`kar3_${id}`);
       if (s1) s1.value = 'Tercapai';
       if (s2) s2.value = 'Tercapai';
+      if (k1) k1.value = 'Memenuhi';
+      if (k2) k2.value = 'Memenuhi';
+      if (k3) k3.value = 'Memenuhi';
     });
-    showToast('Semua siswa diset Mencapai Target. Klik Simpan untuk menyimpan.', 'info');
+    showToast('Semua murid diset Tuntas & Memenuhi Indikator Karakter. Klik Simpan untuk menyimpan.', 'info');
   }
 
   async function saveBulkLitnum() {
@@ -4095,10 +5147,16 @@
     for (const row of rows) {
       const id_siswa = row.getAttribute('data-litnum-row');
       const id_kelas = row.getAttribute('data-litnum-kelas');
+      const klsObj = state.data_kelas.find(k => k.id === id_kelas);
+      const refPanduan = getPanduanLitnumByTingkatAndTriwulan(klsObj?.tingkat || 5, state.litnumTriwulan);
+
       const status_literasi = document.getElementById(`stlit_${id_siswa}`)?.value || 'Tercapai';
       const skor_literasi = Number(document.getElementById(`sklit_${id_siswa}`)?.value || 80);
       const status_numerasi = document.getElementById(`stnum_${id_siswa}`)?.value || 'Tercapai';
       const skor_numerasi = Number(document.getElementById(`sknum_${id_siswa}`)?.value || 80);
+      const karakter_teratur = document.getElementById(`kar1_${id_siswa}`)?.value || 'Memenuhi';
+      const karakter_tekun = document.getElementById(`kar2_${id_siswa}`)?.value || 'Memenuhi';
+      const karakter_mandiri = document.getElementById(`kar3_${id_siswa}`)?.value || 'Memenuhi';
       const catatan_guru = document.getElementById(`catln_${id_siswa}`)?.value.trim() || '';
 
       const existing = state.target_litnum.find(r => r.id_siswa === id_siswa && r.triwulan === state.litnumTriwulan);
@@ -4106,12 +5164,15 @@
         id_siswa,
         id_kelas,
         triwulan: state.litnumTriwulan,
-        target_literasi_desc: litDesc,
+        target_literasi_desc: litDesc || refPanduan.lit_indikator,
         status_literasi,
         skor_literasi,
-        target_numerasi_desc: numDesc,
+        target_numerasi_desc: numDesc || refPanduan.num_indikator,
         status_numerasi,
         skor_numerasi,
+        karakter_teratur,
+        karakter_tekun,
+        karakter_mandiri,
         catatan_guru,
         nama_guru: state.currentUser.nama,
         tahun_pelajaran: state.activeTapel
@@ -4120,7 +5181,7 @@
       if (existing) await dbUpdate('target_litnum', existing.id, payload);
       else await dbInsert('target_litnum', payload);
     }
-    showToast(`Evaluasi Target Literasi & Numerasi (${state.litnumTriwulan}) berhasil disimpan!`);
+    showToast(`Laporan Capaian Literasi, Numerasi & Karakter (${state.litnumTriwulan}) berhasil disimpan!`);
     renderCurrentMenu();
   }
 
@@ -4129,36 +5190,87 @@
     const tw = state.litnumTriwulan;
     const rows = students.map((s, i) => {
       const rec = state.target_litnum.find(r => r.id_siswa === s.id && r.triwulan === tw) || {};
+      const kls = state.data_kelas.find(k => k.id === s.id_kelas);
+      const ref = getPanduanLitnumByTingkatAndTriwulan(kls?.tingkat || 5, tw);
       return {
         No: i + 1,
         NIS: s.nis,
         NISN: s.nisn,
-        Nama_Siswa: s.nama_siswa,
+        Nama_Murid: s.nama_siswa,
         Kelas: getKelasName(s.id_kelas),
         Triwulan: tw,
+        Indikator_Literasi: rec.target_literasi_desc || ref.lit_indikator,
         Status_Literasi: rec.status_literasi || 'Belum Dinilai',
         Skor_Literasi: rec.skor_literasi ?? '-',
+        Indikator_Numerasi: rec.target_numerasi_desc || ref.num_indikator,
         Status_Numerasi: rec.status_numerasi || 'Belum Dinilai',
         Skor_Numerasi: rec.skor_numerasi ?? '-',
+        Karakter_Belajar_Teratur: rec.karakter_teratur || 'Memenuhi',
+        Karakter_Tidak_Mudah_Menyerah: rec.karakter_tekun || 'Memenuhi',
+        Karakter_Tugas_Mandiri: rec.karakter_mandiri || 'Memenuhi',
         Catatan_Guru: rec.catatan_guru || '-',
         Guru_Penilai: rec.nama_guru || '-'
       };
     });
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Rekap_Litnum');
-    XLSX.writeFile(wb, `Rekap_Literasi_Numerasi_${tw.replace(/\s+/g, '_')}.xlsx`);
-    showToast(`Rekap Literasi & Numerasi ${tw} berhasil diekspor ke Excel (.xlsx)!`);
+    XLSX.utils.book_append_sheet(wb, ws, 'Capaian_Triwulan');
+    XLSX.writeFile(wb, `Laporan_Capaian_Litnum_Karakter_${tw.replace(/\s+/g, '_')}.xlsx`);
+    showToast(`Laporan Literasi, Numerasi & Karakter ${tw} berhasil diekspor ke Excel (.xlsx)!`);
   }
 
   function printLitnumReport() {
     const students = getAccessibleStudents();
     const tw = state.litnumTriwulan;
+    const selKelasId = getEffectiveSelectedClassId();
+    const klsObj = selKelasId !== 'ALL' ? state.data_kelas.find(k => k.id === selKelasId) : state.data_kelas[0];
+    const panduan = getPanduanLitnumByTingkatAndTriwulan(klsObj?.tingkat || 5, tw);
+
+    let litOk = 0, numOk = 0, kar1Ok = 0, kar2Ok = 0, kar3Ok = 0;
+    students.forEach(s => {
+      const r = state.target_litnum.find(x => x.id_siswa === s.id && x.triwulan === tw);
+      if (r?.status_literasi === 'Tercapai') litOk++;
+      if (r?.status_numerasi === 'Tercapai') numOk++;
+      if ((r?.karakter_teratur || 'Memenuhi') === 'Memenuhi') kar1Ok++;
+      if ((r?.karakter_tekun || 'Memenuhi') === 'Memenuhi') kar2Ok++;
+      if ((r?.karakter_mandiri || 'Memenuhi') === 'Memenuhi') kar3Ok++;
+    });
+    const tot = students.length;
+    const pLit = tot ? Math.round((litOk / tot) * 100) : 0;
+    const pNum = tot ? Math.round((numOk / tot) * 100) : 0;
+
     const table = `
-      <table class="print-table">
+      <table class="print-table" style="margin-bottom:10px; font-size:10pt;">
         <thead>
           <tr>
-            <th>No</th><th>NIS / NISN</th><th>Nama Siswa</th><th>Kelas</th><th>Status Literasi</th><th>Skor Lit</th><th>Status Numerasi</th><th>Skor Num</th><th>Catatan Guru</th>
+            <th style="width:25%;">Komponen Capaian</th>
+            <th>Indikator Target (${panduan.nama_tingkat} — ${tw})</th>
+            <th style="width:28%;">Progres Capaian Target Rombel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>F. Kemampuan Literasi</b></td>
+            <td>${panduan.lit_indikator}</td>
+            <td>Jumlah murid: <b>${tot} orang</b><br/>Mencapai target: <b>${litOk} orang (${pLit}%)</b></td>
+          </tr>
+          <tr>
+            <td><b>G. Kemampuan Numerasi</b></td>
+            <td>${panduan.num_indikator}</td>
+            <td>Jumlah murid: <b>${tot} orang</b><br/>Mencapai target: <b>${numOk} orang (${pNum}%)</b></td>
+          </tr>
+          <tr>
+            <td><b>H. Karakter Murid (Target ≥85%)</b></td>
+            <td>1) Kebiasaan belajar teratur<br/>2) Tidak mudah menyerah hadapi soal<br/>3) Menyelesaikan tugas mandiri</td>
+            <td>1) Teratur: <b>${kar1Ok} org (${tot ? Math.round((kar1Ok/tot)*100) : 0}%)</b><br/>2) Tekun: <b>${kar2Ok} org (${tot ? Math.round((kar2Ok/tot)*100) : 0}%)</b><br/>3) Mandiri: <b>${kar3Ok} org (${tot ? Math.round((kar3Ok/tot)*100) : 0}%)</b></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="print-table" style="font-size:9.5pt;">
+        <thead>
+          <tr>
+            <th>No</th><th>NIS / NISN</th><th>Nama Murid</th><th>Kelas</th><th>Literasi</th><th>Numerasi</th><th>Kar 1 (Teratur)</th><th>Kar 2 (Tekun)</th><th>Kar 3 (Mandiri)</th><th>Catatan Guru</th>
           </tr>
         </thead>
         <tbody>
@@ -4170,10 +5282,11 @@
                 <td>${s.nis} / ${s.nisn}</td>
                 <td>${s.nama_siswa}</td>
                 <td style="text-align:center">${getKelasName(s.id_kelas)}</td>
-                <td style="text-align:center">${rec.status_literasi || '-'}</td>
-                <td style="text-align:center">${rec.skor_literasi ?? '-'}</td>
-                <td style="text-align:center">${rec.status_numerasi || '-'}</td>
-                <td style="text-align:center">${rec.skor_numerasi ?? '-'}</td>
+                <td style="text-align:center">${rec.status_literasi || '-'} (${rec.skor_literasi ?? '-'})</td>
+                <td style="text-align:center">${rec.status_numerasi || '-'} (${rec.skor_numerasi ?? '-'})</td>
+                <td style="text-align:center">${rec.karakter_teratur || 'Memenuhi'}</td>
+                <td style="text-align:center">${rec.karakter_tekun || 'Memenuhi'}</td>
+                <td style="text-align:center">${rec.karakter_mandiri || 'Memenuhi'}</td>
                 <td>${rec.catatan_guru || '-'}</td>
               </tr>
             `;
@@ -4181,7 +5294,7 @@
         </tbody>
       </table>
     `;
-    buildOfficialPrintDocument(`LAPORAN CAPAIAN TARGET LITERASI DAN NUMERASI — ${tw.toUpperCase()}`, `Tahun Pelajaran ${state.activeTapel}`, table);
+    buildOfficialPrintDocument(`LAPORAN CAPAIAN PEMBELAJARAN (LITERASI, NUMERASI & KARAKTER) — ${tw.toUpperCase()}`, `${PERIODE_TRIWULAN_INFO[tw]} • Tahun Pelajaran ${state.activeTapel}`, table);
   }
 
   // BIMBINGAN WALI HANDLERS
@@ -4793,8 +5906,15 @@
     saveBulkNilai,
     exportNilaiExcel,
     printRekapNilai,
-    // Literasi & Numerasi Triwulan
+    // E-Rapor Kurikulum Merdeka
+    selectRaporSiswa,
+    saveERaporSiswa,
+    printSingleERapor,
+    exportLegerERaporExcel,
+    // Literasi, Numerasi & Karakter Triwulan (Sesuai Panduan Kab. Donggala)
     setLitnumTriwulan,
+    setLitnumTingkatRef,
+    openModalMatriksPanduanLengkap,
     markAllLitnumTercapai,
     saveBulkLitnum,
     exportLitnumExcel,
